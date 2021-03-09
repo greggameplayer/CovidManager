@@ -1,2 +1,2 @@
 # CovidManager
-a school project in react native
+a school project in java
