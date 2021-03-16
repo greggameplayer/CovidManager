@@ -1,12 +1,14 @@
-name: Android Feature Branch CI
+name: Android Build And Test
 
 on:
   push:
     branches:
       - dev
+      - main
   pull_request:
     branches:
       - dev
+      - main
 
 jobs:
   test:
@@ -15,7 +17,7 @@ jobs:
     strategy:
       matrix:
         # test against latest update of each major Java version, as well as specific updates of LTS versions:
-        java: [ 8, 8.0.192, 9.0.x, 10, 11.0.x, 11.0.3, 12, 13 ]
+        java: [ 8, 9.0.x, 10, 11.0.x, 12, 13 ]
 
     steps:
     - uses: actions/checkout@v1
