@@ -1,0 +1,29 @@
+name: Android Feature Branch CI
+
+on:
+  push:
+    branches:
+      - dev
+  pull_request:
+    branches:
+      - dev
+
+jobs:
+  test:
+    name: Run Unit Tests
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        # test against latest update of each major Java version, as well as specific updates of LTS versions:
+        java: [ 8, 8.0.192, 9.0.x, 10, 11.0.x, 11.0.3, 12, 13 ]
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: set up JDK ${{ matrix.java }}
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ matrix.java }}
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v2
+    - name: Unit tests
+      run: bash ./gradlew test --stacktrace
