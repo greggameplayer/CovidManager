@@ -9,16 +9,16 @@
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="147dp"
+        android:layout_height="70dp"
         android:layout_marginStart="1dp"
         android:layout_marginTop="60dp"
         android:layout_marginEnd="1dp"
+        android:contentDescription="@string/img_logo_value"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/btn_star_big_on"
-        android:contentDescription="@string/img_logo_value" />
+        app:srcCompat="@drawable/logo" />
 
     <EditText
         android:id="@+id/editTextTextPersonName4"
