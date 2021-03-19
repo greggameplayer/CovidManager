@@ -1,9 +1,11 @@
-package com.epsi.covidmanager;
+package com.epsi.covidmanager.controller;
 
 import android.os.Bundle;
 
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.epsi.covidmanager.R;
 
 public class DashBordActivity extends AppCompatActivity {
 
