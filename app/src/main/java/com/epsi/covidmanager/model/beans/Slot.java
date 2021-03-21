@@ -1,12 +1,18 @@
 package com.epsi.covidmanager.model.beans;
 
-public class Slot {
+import java.io.Serializable;
+
+public class Slot implements Serializable {
+    private static int NUMBER = 0;
     private String date;
-    private int nb;
+    private int nb, id;
 
     public Slot(){
         date = "2020-12-03";
         nb = 120;
+        id = NUMBER;
+        NUMBER++;
+
     }
 
     public String getDate() {
@@ -16,4 +22,5 @@ public class Slot {
     public int getNb() {
         return nb;
     }
+    public int getId(){ return id; }
 }

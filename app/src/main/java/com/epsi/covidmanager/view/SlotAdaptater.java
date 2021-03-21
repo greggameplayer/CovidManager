@@ -29,23 +29,18 @@ public class SlotAdaptater extends RecyclerView.Adapter<SlotAdaptater.ViewHolder
     }
 
 
-
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_slot, parent, false);
 
         return new SlotAdaptater.ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final Slot slot = slots.get(position);
 
-
-
-
-
-        //A mettre à jour
         holder.tv_slot_date.setText(slot.getDate());
         holder.tv_nb_doses.setText(slot.getNb()+"");
         holder.root.setOnClickListener(new View.OnClickListener() {
@@ -72,8 +67,8 @@ public class SlotAdaptater extends RecyclerView.Adapter<SlotAdaptater.ViewHolder
         public ViewHolder(View itemView) {
             super(itemView);
 
-            tv_slot_date = (TextView) itemView.findViewById(R.id.tv_slot_date);
-            tv_nb_doses = (TextView) itemView.findViewById(R.id.tv_nb_doses);
+            tv_slot_date = itemView.findViewById(R.id.tv_slot_date);
+            tv_nb_doses = itemView.findViewById(R.id.tv_nb_doses);
             root = itemView.findViewById(R.id.root);
         }
 

@@ -23,6 +23,13 @@
                 <category android:name="android.intent.category.HOME" />
             </intent-filter>
         </activity>
+        <activity android:name=".controller.DetailsSlot">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.HOME" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

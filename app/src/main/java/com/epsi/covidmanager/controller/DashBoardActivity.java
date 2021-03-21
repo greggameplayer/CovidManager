@@ -3,7 +3,6 @@ package com.epsi.covidmanager.controller;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -53,9 +52,9 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
 
     @Override
     public void onClick(Slot slot) {
-        //Intent intent = new Intent(this, DetailsSlots.class);
-        //intent.putExtra(DetailsSlots.SLOT_KEY, slots);
-        //startActivity(intent);
-        Toast.makeText(this, "Vous avez cliqué", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, DetailsSlot.class);
+        intent.putExtra(DetailsSlot.SLOT_KEY, slot);
+        Log.w("TAG", slot.getId()+"");
+        startActivity(intent);
     }
 }
