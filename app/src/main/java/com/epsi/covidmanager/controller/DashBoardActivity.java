@@ -34,7 +34,7 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
 
         slots = new ArrayList<>();
 
-        for(int i = 0 ; i<4 ; i++){
+        for(int i = 0 ; i<=50 ; i++){
             slots.add(new Slot());
 
         }
