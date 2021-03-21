@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">CovidManager</string>
-    <string name="login">Login</string>
+    <string name="login">Identifiant</string>
     <string name="password">Mot de passe</string>
     <string name="bt_connect">Connexion</string>
     <string name="img_logo_value">Logo covid manager</string>
+    <string name="bt_add_slot">Ajouter un créneau</string>
 </resources>

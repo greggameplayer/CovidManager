@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         if(verifLogin && verifPassword){
-            Intent intent = new Intent(this, DashBordActivity.class);
+            Intent intent = new Intent(this, DashBoardActivity.class);
             startActivity(intent);
         }
         else if(verifLogin && !verifPassword) {
