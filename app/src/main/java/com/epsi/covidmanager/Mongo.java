@@ -45,7 +45,6 @@ public class Mongo {
                         .allowQueriesOnUiThread(true)
                         .allowWritesOnUiThread(true)
                         .build();
-                updateOneVaccine("vaccine", "Pfizer", new Vaccine("CovidManager", "Moderna"));
             } else {
                 Log.e("AUTH", it.getError().toString());
             }
