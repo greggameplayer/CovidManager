@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.epsi.covidmanager.Mongo;
 import com.epsi.covidmanager.R;
 import com.epsi.covidmanager.model.beans.Slot;
 import com.epsi.covidmanager.view.SlotAdaptater;
@@ -27,6 +28,8 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
     //Outil
     private SlotAdaptater slotAdaptater;
 
+    private Mongo mongo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +38,7 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
 
         rv_card_slot = findViewById(R.id.rv_card_slot);
         bt_add_slot = findViewById(R.id.bt_add_slot);
+        mongo = Mongo.getInstance("covidmanager-wweml");
 
         slots = new ArrayList<>();
 

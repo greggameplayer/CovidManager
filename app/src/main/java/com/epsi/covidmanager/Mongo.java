@@ -5,12 +5,11 @@ import android.util.Log;
 import com.epsi.covidmanager.entities.Vaccine;
 
 import org.bson.Document;
-import org.bson.types.ObjectId;
 
+import java.io.Serializable;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import io.realm.Realm;
-import io.realm.RealmResults;
 import io.realm.mongodb.App;
 import io.realm.mongodb.AppConfiguration;
 import io.realm.mongodb.Credentials;
@@ -22,37 +21,35 @@ import io.realm.mongodb.mongo.MongoDatabase;
 import io.realm.mongodb.mongo.iterable.MongoCursor;
 import io.realm.mongodb.sync.SyncConfiguration;
 
-public class Mongo {
+public final class Mongo implements Serializable {
+    private static Mongo instance;
     private final App app;
     private final AtomicReference<User> user;
     private SyncConfiguration config;
     private MongoClient client;
     private MongoDatabase database;
 
-    public Mongo(String appId, String database) {
+    private Mongo(String appId) {
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
         app = new App(new AppConfiguration.Builder(appId)
                 .build());
-        Credentials anonymousCredentials = Credentials.anonymous();
         user = new AtomicReference<>();
-        app.loginAsync(anonymousCredentials, it -> {
-            if (it.isSuccess()) {
-                Log.v("AUTH", "Successfully authenticated anonymously.");
-                user.set(app.currentUser());
-                client = user.get().getMongoClient("mongodb-atlas");
-                this.database = client.getDatabase(database);
-
-                config = new SyncConfiguration.Builder(user.get(), "CovidManager")
-                        .allowQueriesOnUiThread(true)
-                        .allowWritesOnUiThread(true)
-                        .build();
-            } else {
-                Log.e("AUTH", it.getError().toString());
-            }
-        });
     }
 
-    public AtomicReference<User> getUser() {
-        return user;
+    public static Mongo getInstance(String appId) {
+        if (instance == null) {
+            instance = new Mongo(appId);
+        }
+        return instance;
+    }
+
+    public void login (String email, String password, App.Callback<User> callback) {
+        Credentials emailPasswordCredentials = Credentials.emailPassword(email, password);
+        app.loginAsync(emailPasswordCredentials, callback);
     }
 
     /* public void writeAstraZenecaLocally() {
@@ -112,5 +109,25 @@ public class Mongo {
 
     public MongoDatabase getDatabase() {
         return database;
+    }
+
+    public void setClient(MongoClient client) {
+        this.client = client;
+    }
+
+    public void setDatabase(MongoDatabase database) {
+        this.database = database;
+    }
+
+    public MongoClient getClient() {
+        return client;
+    }
+
+    public AtomicReference<User> getUser() {
+        return user;
+    }
+
+    public App getApp() {
+        return app;
     }
 }
