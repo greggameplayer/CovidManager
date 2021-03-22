@@ -41,8 +41,9 @@ public class SlotAdaptater extends RecyclerView.Adapter<SlotAdaptater.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final Slot slot = slots.get(position);
 
-        holder.tv_slot_date.setText(slot.getDate() + " ");
-        holder.tv_nb_doses.setText(slot.getNb()+"");
+        holder.tv_slot_date.setText(slot.getDate() + "");
+        holder.tv_nb_doses.setText(slot.getNb() + "");
+        holder.tv_slot_vaccine.setText(slot.getVaccin());
 
         holder.root.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,7 +62,7 @@ public class SlotAdaptater extends RecyclerView.Adapter<SlotAdaptater.ViewHolder
 
     protected class ViewHolder extends RecyclerView.ViewHolder{
 
-        public TextView tv_slot_date, tv_nb_doses;
+        public TextView tv_slot_date, tv_nb_doses, tv_slot_vaccine;
         public View root;
 
         public ViewHolder(View itemView) {
@@ -69,6 +70,7 @@ public class SlotAdaptater extends RecyclerView.Adapter<SlotAdaptater.ViewHolder
 
             tv_slot_date = itemView.findViewById(R.id.tv_slot_date);
             tv_nb_doses = itemView.findViewById(R.id.tv_nb_doses);
+            tv_slot_vaccine = itemView.findViewById(R.id.tv_slot_vaccine);
             root = itemView.findViewById(R.id.root);
         }
 
