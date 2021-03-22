@@ -41,15 +41,15 @@ public class SlotAdaptater extends RecyclerView.Adapter<SlotAdaptater.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final Slot slot = slots.get(position);
 
-        holder.tv_slot_date.setText(slot.getDate());
+        holder.tv_slot_date.setText(slot.getDate() + " ");
         holder.tv_nb_doses.setText(slot.getNb()+"");
+
         holder.root.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(onSlotListener != null){
                     onSlotListener.onClick(slot);
                 }
-
             }
         });
     }
