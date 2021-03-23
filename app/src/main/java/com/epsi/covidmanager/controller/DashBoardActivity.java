@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.epsi.covidmanager.model.mongo.Mongo;
 import com.epsi.covidmanager.R;
-import com.epsi.covidmanager.model.beans.Slot;
+import com.epsi.covidmanager.model.mongo.Slot;
 import com.epsi.covidmanager.view.SlotAdaptater;
 
 import java.util.ArrayList;

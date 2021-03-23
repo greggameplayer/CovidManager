@@ -1,7 +1,6 @@
 package com.epsi.covidmanager.model.mongo;
 
 import android.util.Log;
-import com.epsi.covidmanager.model.beans.Vaccine;
 
 import org.bson.Document;
 

@@ -1,12 +1,9 @@
-package com.epsi.covidmanager.model.beans;
-
-import com.epsi.covidmanager.model.mongo.Mongo;
+package com.epsi.covidmanager.model.mongo;
 
 import org.bson.Document;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.types.ObjectId;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,7 +26,7 @@ public class Vial extends Document {
     }
 
     @BsonIgnore
-    public final void findAll(App.Callback<MongoCursor<Document>> callback) {
+    public static void findAll(App.Callback<MongoCursor<Document>> callback) {
         Mongo mongo = Mongo.getInstance("covidmanager-wweml");
         List<Document> pipeline = Arrays.asList(new Document("$lookup", new Document("from", "vaccine").append("localField", "vaccineId").append("foreignField", "_id").append("as", "vial.vaccine")));
         MongoCollection<Document> collection = mongo.getDatabase().getCollection("vial");
@@ -38,7 +35,7 @@ public class Vial extends Document {
     }
 
     @BsonIgnore
-    public final void findById(ObjectId id, App.Callback<MongoCursor<Document>> callback) {
+    public static void findById(ObjectId id, App.Callback<MongoCursor<Document>> callback) {
         Mongo mongo = Mongo.getInstance("covidmanager-wweml");
         List<Document> pipeline = Arrays.asList(new Document("$match", new Document("_id", id)),new Document("$lookup", new Document("from", "vaccine").append("localField", "vaccineId").append("foreignField", "_id").append("as", "vial.vaccine")));
         MongoCollection<Document> collection = mongo.getDatabase().getCollection("vial");
@@ -47,7 +44,7 @@ public class Vial extends Document {
     }
 
     @BsonIgnore
-    public final void updateShotNumber(ObjectId _id, int shotNumber, App.Callback<UpdateResult> callback) {
+    public static void updateShotNumber(ObjectId _id, int shotNumber, App.Callback<UpdateResult> callback) {
         Mongo mongo = Mongo.getInstance("covidmanager-wweml");
         Document queryFilter = new Document("_id", _id).append("_partitionKey", "covidManager");
         Document updateDocument = new Document("shotNumber", shotNumber).append("_partitionKey", "covidManager");

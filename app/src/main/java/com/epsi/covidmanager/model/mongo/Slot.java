@@ -1,25 +1,19 @@
-package com.epsi.covidmanager.model.beans;
+package com.epsi.covidmanager.model.mongo;
 
 import android.util.Log;
-
-import com.epsi.covidmanager.model.mongo.Mongo;
 
 import org.bson.Document;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.types.ObjectId;
 
-import java.io.Serializable;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 
-import io.realm.RealmObject;
 import io.realm.mongodb.App;
 import io.realm.mongodb.RealmResultTask;
 import io.realm.mongodb.mongo.MongoCollection;
@@ -53,7 +47,7 @@ public class Slot extends Document {
     }
 
     @BsonIgnore
-    public final void findAll(App.Callback<MongoCursor<Document>> callback) {
+    public static void findAll(App.Callback<MongoCursor<Document>> callback) {
         Mongo mongo = Mongo.getInstance("covidmanager-wweml");
         List<Document> pipeline = Arrays.asList(new Document("$lookup", new Document("from", "vial").append("localField", "vialId").append("foreignField", "_id").append("as", "slot.vial")));
         MongoCollection<Document> collection = mongo.getDatabase().getCollection("slot");
@@ -62,7 +56,7 @@ public class Slot extends Document {
     }
 
     @BsonIgnore
-    public final void deleteById(ObjectId _id, App.Callback<UpdateResult> callback) {
+    public static void deleteById(ObjectId _id, App.Callback<UpdateResult> callback) {
         Mongo mongo = Mongo.getInstance("covidmanager-wweml");
         Document queryFilter = new Document("_partitionKey", "covidManager").append("_id", _id);
         Document updateDocument = new Document("isActive", false).append("_partitionKey", "covidManager");
@@ -71,7 +65,7 @@ public class Slot extends Document {
     }
 
     @BsonIgnore
-    public final void updateNbReservedPlaces(ObjectId _id, int nbReservedPlaces, App.Callback<UpdateResult> callback) {
+    public static void updateNbReservedPlaces(ObjectId _id, int nbReservedPlaces, App.Callback<UpdateResult> callback) {
         Mongo mongo = Mongo.getInstance("covidmanager-wweml");
         Document queryFilter = new Document("_partitionKey", "covidManager").append("_id", _id);
         Document updateDocument = new Document("nbReservedPlaces", nbReservedPlaces).append("_partitionKey", "covidManager");
@@ -80,7 +74,7 @@ public class Slot extends Document {
     }
 
     @BsonIgnore
-    public final void updateStartAndEndTime(ObjectId _id, Date startTime, Date endTime, App.Callback<UpdateResult> callback) {
+    public static void updateStartAndEndTime(ObjectId _id, Date startTime, Date endTime, App.Callback<UpdateResult> callback) {
         Mongo mongo = Mongo.getInstance("covidmanager-wweml");
         Document queryFilter = new Document("_partitionKey", "covidManager").append("_id", _id);
         Document updateDocument = new Document("startTime", startTime).append("endTime", endTime).append("_partitionKey", "covidManager");
@@ -89,7 +83,7 @@ public class Slot extends Document {
     }
 
     @BsonIgnore
-    public final void insert(Slot slot, App.Callback<InsertOneResult> callback) {
+    public static void insert(Slot slot, App.Callback<InsertOneResult> callback) {
         Mongo mongo = Mongo.getInstance("covidmanager-wweml");
         MongoCollection<Document> collection = mongo.getDatabase().getCollection("slot");
         collection.insertOne(slot).getAsync(callback);

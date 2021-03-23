@@ -1,6 +1,4 @@
-package com.epsi.covidmanager.model.beans;
-
-import com.epsi.covidmanager.model.mongo.Mongo;
+package com.epsi.covidmanager.model.mongo;
 
 import org.bson.Document;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
@@ -22,7 +20,7 @@ public class Vaccine extends Document {
     }
 
     @BsonIgnore
-    public final void findAll(App.Callback<MongoCursor<Document>> callback) {
+    public static void findAll(App.Callback<MongoCursor<Document>> callback) {
         Mongo mongo = Mongo.getInstance("covidmanager-wweml");
         Document queryFilter = new Document("_partitionKey", "covidManager");
         MongoCollection<Document> collection = mongo.getDatabase().getCollection("vaccine");
@@ -31,7 +29,7 @@ public class Vaccine extends Document {
     }
 
     @BsonIgnore
-    public final void findByName(String name, App.Callback<MongoCursor<Document>> callback) {
+    public static void findByName(String name, App.Callback<MongoCursor<Document>> callback) {
         Mongo mongo = Mongo.getInstance("covidmanager-wweml");
         Document queryFilter = new Document("_partitionKey", "covidManager").append("name", name);
         MongoCollection<Document> collection = mongo.getDatabase().getCollection("vaccine");

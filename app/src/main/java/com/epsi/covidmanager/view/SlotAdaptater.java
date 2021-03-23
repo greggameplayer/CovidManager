@@ -1,7 +1,5 @@
 package com.epsi.covidmanager.view;
 
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +10,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.epsi.covidmanager.R;
-import com.epsi.covidmanager.model.beans.Slot;
+import com.epsi.covidmanager.model.mongo.Slot;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class SlotAdaptater extends RecyclerView.Adapter<SlotAdaptater.ViewHolder> {
 
