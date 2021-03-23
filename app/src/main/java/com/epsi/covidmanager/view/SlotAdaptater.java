@@ -15,6 +15,7 @@ import com.epsi.covidmanager.R;
 import com.epsi.covidmanager.model.beans.Slot;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class SlotAdaptater extends RecyclerView.Adapter<SlotAdaptater.ViewHolder> {
 
@@ -41,9 +42,10 @@ public class SlotAdaptater extends RecyclerView.Adapter<SlotAdaptater.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final Slot slot = slots.get(position);
 
-        holder.tv_slot_date.setText(slot.getDate() + "");
-        holder.tv_nb_doses.setText(slot.getNb() + "");
-        holder.tv_slot_vaccine.setText(slot.getVaccin());
+        //holder.tv_slot_date.setText(slot.getDate() + " ");
+        //holder.tv_nb_doses.setText(slot.getNb()+"");
+
+        slot.slotDuration();
 
         holder.root.setOnClickListener(new View.OnClickListener() {
             @Override

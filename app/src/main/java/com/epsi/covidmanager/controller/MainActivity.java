@@ -7,23 +7,20 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.epsi.covidmanager.Mongo;
+import com.epsi.covidmanager.model.mongo.Mongo;
 import com.epsi.covidmanager.R;
-import com.epsi.covidmanager.controller.DashBoardActivity;
 
 import java.util.concurrent.atomic.AtomicReference;
 
 import io.realm.Realm;
 import io.realm.mongodb.App;
 import io.realm.mongodb.User;
-import io.realm.mongodb.mongo.MongoClient;
 import io.realm.mongodb.sync.SyncConfiguration;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {

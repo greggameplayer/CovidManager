@@ -1,4 +1,4 @@
-package com.epsi.covidmanager;
+package com.epsi.covidmanager.model.mongo;
 
 import android.util.Log;
 
@@ -7,7 +7,6 @@ import com.epsi.covidmanager.entities.Vaccine;
 import org.bson.Document;
 
 import java.io.Serializable;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import io.realm.mongodb.App;
@@ -73,6 +72,7 @@ public final class Mongo implements Serializable {
     } */
 
     public void findAll(String collection) {
+        //Document queryFilter = new Document("_partitionKey", "CovidManager").append("name", "value");
         Document queryFilter = new Document("_partitionKey", "CovidManager");
         MongoCollection<Document> collection1 = database.getCollection(collection);
         RealmResultTask<MongoCursor<Document>> findTask = collection1.find(queryFilter).iterator();

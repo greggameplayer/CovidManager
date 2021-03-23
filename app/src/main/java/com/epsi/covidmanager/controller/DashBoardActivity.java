@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.epsi.covidmanager.Mongo;
+import com.epsi.covidmanager.model.mongo.Mongo;
 import com.epsi.covidmanager.R;
 import com.epsi.covidmanager.model.beans.Slot;
 import com.epsi.covidmanager.view.SlotAdaptater;
@@ -42,9 +42,8 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
 
         slots = new ArrayList<>();
 
-        for(int i = 0 ; i<=50 ; i++){
+        for(int i = 0 ; i <= 2; i++){
             slots.add(new Slot());
-
         }
 
         bt_add_slot.setOnClickListener(this);
