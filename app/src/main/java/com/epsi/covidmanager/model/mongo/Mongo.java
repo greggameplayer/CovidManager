@@ -1,8 +1,7 @@
 package com.epsi.covidmanager.model.mongo;
 
 import android.util.Log;
-
-import com.epsi.covidmanager.entities.Vaccine;
+import com.epsi.covidmanager.model.beans.Vaccine;
 
 import org.bson.Document;
 
@@ -91,9 +90,9 @@ public final class Mongo implements Serializable {
 
     public void updateOneVaccine(String collection, String vaccineName, Vaccine newVaccine) {
         Document queryFilter = new Document("name", vaccineName).append("_partitionKey", "CovidManager");
-        Document updateDocument = new Document("name", newVaccine.getName()).append("_partitionKey", "CovidManager");
+        //Document updateDocument = new Document("name", newVaccine.getName()).append("_partitionKey", "CovidManager");
         MongoCollection<Document> mongoCollection = database.getCollection(collection);
-        mongoCollection.updateOne(queryFilter, updateDocument).getAsync(task -> {
+        /*mongoCollection.updateOne(queryFilter, updateDocument).getAsync(task -> {
             if (task.isSuccess()) {
                 long count = task.get().getModifiedCount();
                 if (count == 1) {
@@ -104,7 +103,7 @@ public final class Mongo implements Serializable {
             } else {
                 Log.e("EXAMPLE", "failed to update document with: ", task.getError());
             }
-        });
+        });*/
     }
 
     public MongoDatabase getDatabase() {
