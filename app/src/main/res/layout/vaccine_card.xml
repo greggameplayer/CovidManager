@@ -9,7 +9,6 @@
     android:layout_marginBottom="10dp"
     app:cardCornerRadius="4dp">
 
-
     <LinearLayout
         android:id="@+id/root"
         android:layout_width="match_parent"
@@ -23,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:text="Date du jour "
+            android:text="Nom du vaccin : "
             android:textSize="18dp" />
 
         <LinearLayout
@@ -49,7 +48,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="0"
-                        android:text="Doses prévues : " />
+                        android:text="Doses restantes : " />
 
                     <TextView
                         android:id="@+id/tv_card_vaccine_nb"
@@ -57,20 +56,6 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0" />
 
-                    <TextView
-                        android:id="@+id/textView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:layout_weight="0"
-                        android:text="Doses restante : " />
-
-                    <TextView
-                        android:id="@+id/textView3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        android:text="18" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -84,7 +69,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_weight="0"
-                        android:text="Type de vaccin : " />
+                        android:text="Doses prévisionnelles" />
 
                     <TextView
                         android:id="@+id/tv_card_vaccine_nb_prev"
@@ -95,28 +80,8 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <Button
-                    android:id="@+id/bt_modifier"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0"
-                    app:icon="@android:drawable/btn_star_big_on"
-                    app:iconGravity="textTop" />
-
-                <Button
-                    android:id="@+id/bt_supprimer"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0"
-                    app:icon="@android:drawable/ic_delete"
-                    app:iconGravity="textTop" />
-            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>
+
 </androidx.cardview.widget.CardView>

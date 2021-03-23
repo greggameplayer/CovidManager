@@ -68,9 +68,9 @@ public class SlotAdaptater extends RecyclerView.Adapter<SlotAdaptater.ViewHolder
         public ViewHolder(View itemView) {
             super(itemView);
 
-            tv_slot_date = itemView.findViewById(R.id.tv_slot_date);
-            tv_nb_doses = itemView.findViewById(R.id.tv_nb_doses);
-            tv_slot_vaccine = itemView.findViewById(R.id.tv_slot_vaccine);
+            tv_slot_date = itemView.findViewById(R.id.tv_card_vaccine_name);
+            tv_nb_doses = itemView.findViewById(R.id.tv_card_vaccine_nb);
+            tv_slot_vaccine = itemView.findViewById(R.id.tv_card_vaccine_nb_prev);
             root = itemView.findViewById(R.id.root);
         }
 
