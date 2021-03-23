@@ -11,9 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.epsi.covidmanager.model.beans.Slot;
 import com.epsi.covidmanager.model.mongo.Mongo;
 import com.epsi.covidmanager.R;
-import com.epsi.covidmanager.model.mongo.Slot;
 import com.epsi.covidmanager.view.SlotAdaptater;
 
 import java.util.ArrayList;
@@ -74,7 +74,4 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
         intent.putExtra(DetailsSlot.SLOT_KEY, slot);
         startActivity(intent);
     }
-
-
-
 }

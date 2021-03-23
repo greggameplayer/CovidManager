@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import com.epsi.covidmanager.R;
-import com.epsi.covidmanager.model.mongo.Slot;
+import com.epsi.covidmanager.model.beans.Slot;
 
 public class DetailsSlot extends AppCompatActivity {
 
