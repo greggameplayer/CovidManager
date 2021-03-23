@@ -146,9 +146,10 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
 
     @Override
     public void onClick(View v) {
-        Toast.makeText(this, "Implémenter le intent de onClick ajouter créneaux", Toast.LENGTH_SHORT).show();
-        //Intent intent = new Intent(this, .....class);
-        //startActivity(intent);
+        Intent intent = new Intent(this, DashBoardVaccin.class);
+        String str = "addSlot";
+        intent.putExtra("slot", str);
+        startActivity(intent);
     }
 
     @Override

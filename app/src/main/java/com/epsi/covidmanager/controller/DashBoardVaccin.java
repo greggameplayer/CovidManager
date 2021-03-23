@@ -27,10 +27,16 @@ public class DashBoardVaccin extends AppCompatActivity implements AdapterView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dashboard_vaccin);
 
+        Intent intent = getIntent();
 
-        spinnerVaccin = (Spinner)findViewById(R.id.spinnerVaccin);
+        String str = "";
+        if (intent.hasExtra("slot")){
+            str = intent.getStringExtra("slot"); // on récupère la valeur associée à la clé
+        }
+
+        spinnerVaccin = (Spinner) findViewById(R.id.spinnerVaccin);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(DashBoardVaccin.this,
-                android.R.layout.simple_spinner_item,paths);
+                android.R.layout.simple_spinner_item, paths);
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerVaccin.setAdapter(adapter);
@@ -38,9 +44,16 @@ public class DashBoardVaccin extends AppCompatActivity implements AdapterView.On
 
         heureDebut = findViewById(R.id.heureDebut);
         heureFin = findViewById(R.id.heureFin);
-        nbDose =  findViewById(R.id.nombreDose);
+        nbDose = findViewById(R.id.nombreDose);
 
         btn_valider.setOnClickListener((View.OnClickListener) this);
+
+        if (str == "editSlot") {
+            //TODO requete SQL slot
+
+           // heureDebut.setText();
+           // heureFin.setText();
+        }
     }
 
     @Override
@@ -83,13 +96,13 @@ public class DashBoardVaccin extends AppCompatActivity implements AdapterView.On
         //TODO créer les requetes d'ajout de crénaud
         String[] slot = new String[3];
         //Verify if the slot is disponible
-        //Requete SQL that select a slot, if there is non it can add it
+        //Requete SQL that select a slot, if there is none it can add it
         //TODO
 
         if (slot.length == 0){
             //requete wich add the new slot
             //TODO
-            Intent intent = new Intent(this, DashBoardVaccin.class);
+            Intent intent = new Intent(this, DashBoardActivity.class);
             startActivity(intent);
         }
 
