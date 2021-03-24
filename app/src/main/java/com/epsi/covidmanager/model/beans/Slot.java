@@ -2,6 +2,9 @@ package com.epsi.covidmanager.model.beans;
 
 import android.util.Log;
 
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.Logger;
+
 import java.io.Serializable;
 
 import java.text.DateFormat;
@@ -28,6 +31,7 @@ public class Slot extends RealmObject implements Serializable {
         endTime = CALENDAR.getTime();
         isActive = true;
         nbReservedPlaces = 0;
+        Logger.addLogAdapter(new AndroidLogAdapter());
 
     }
 
@@ -53,8 +57,8 @@ public class Slot extends RealmObject implements Serializable {
 
         long elapsedSeconds = test / secondsInMilli;
 
-        Log.w("TAG", DATE_FORMAT.format(startTime) +"");
-        Log.w("TAG",  elapsedDays + "days, " + elapsedHours +  "hours, " + elapsedMinutes + "d minutes, " + elapsedSeconds +"seconds%n");
+        Logger.w(DATE_FORMAT.format(startTime));
+        Logger.w(elapsedDays + "days, " + elapsedHours +  "hours, " + elapsedMinutes + "d minutes, " + elapsedSeconds +"seconds");
 
 
 

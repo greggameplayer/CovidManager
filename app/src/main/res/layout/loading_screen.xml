@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoadingScreenActivity">
+    tools:context=".controller.LoadingScreenActivity">
 
     <com.bhargavms.dotloader.DotLoader
         android:id="@+id/text_dot_loader"

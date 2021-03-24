@@ -7,15 +7,15 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.epsi.covidmanager.LoadingScreenActivity;
 import com.epsi.covidmanager.model.mongo.Mongo;
 import com.epsi.covidmanager.R;
+import com.orhanobut.logger.AndroidLogAdapter;
+import com.orhanobut.logger.Logger;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Logger.addLogAdapter(new AndroidLogAdapter());
         btConnection = findViewById(R.id.bt_connection);
         etLogin = findViewById(R.id.ed_login);
         etPassword = findViewById(R.id.ed_password);
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(intent);
                 mongo.login(etLogin.getText().toString(), etPassword.getText().toString(), it -> {
                     if (it.isSuccess()) {
-                        Log.v("AUTH", "Successfully authenticated.");
+                        Logger.v("Successfully authenticated.");
                         user.set(app.currentUser());
                         mongo.setClient(user.get().getMongoClient("mongodb-atlas"));
                         mongo.setDatabase(mongo.getClient().getDatabase("covidManager"));
@@ -66,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     } else {
                         Intent returnHome = new Intent(this, MainActivity.class);
                         startActivity(returnHome);
-                        Log.e("AUTH", it.getError().toString());
+                        Logger.e(it.getError().toString());
                         Toast.makeText(MainActivity.this, "This user doesn't exist", Toast.LENGTH_SHORT).show();
                     }
                 });
