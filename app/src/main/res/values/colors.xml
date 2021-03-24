@@ -9,4 +9,9 @@
     <color name="white">#FFFFFFFF</color>
     <color name="primary">#0964A5</color>
     <color name="primaryVariant">#064470</color>
+    <array name="dot_colors">
+        <item>#0964A5</item>
+        <item>#0964A5</item>
+        <item>#0964A5</item>
+    </array>
 </resources>

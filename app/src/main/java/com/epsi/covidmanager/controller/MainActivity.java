@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.epsi.covidmanager.LoadingScreenActivity;
 import com.epsi.covidmanager.model.mongo.Mongo;
 import com.epsi.covidmanager.R;
 
@@ -47,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Mongo mongo = Mongo.getInstance("covidmanager-wweml");
                 AtomicReference<User> user = mongo.getUser();
                 App app = mongo.getApp();
+                Intent intent = new Intent(this, LoadingScreenActivity.class);
+                startActivity(intent);
                 mongo.login(etLogin.getText().toString(), etPassword.getText().toString(), it -> {
                     if (it.isSuccess()) {
                         Log.v("AUTH", "Successfully authenticated.");
@@ -58,9 +61,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 .allowQueriesOnUiThread(true)
                                 .allowWritesOnUiThread(true)
                                 .build();
-                        Intent intent = new Intent(this, DashBoardActivity.class);
-                        startActivity(intent);
+                        Intent intentDashboard = new Intent(this, DashBoardActivity.class);
+                        startActivity(intentDashboard);
                     } else {
+                        Intent returnHome = new Intent(this, MainActivity.class);
+                        startActivity(returnHome);
                         Log.e("AUTH", it.getError().toString());
                         Toast.makeText(MainActivity.this, "This user doesn't exist", Toast.LENGTH_SHORT).show();
                     }
