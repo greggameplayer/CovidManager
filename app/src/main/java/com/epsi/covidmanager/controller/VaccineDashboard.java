@@ -1,10 +1,12 @@
 package com.epsi.covidmanager.controller;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -54,7 +56,9 @@ public class VaccineDashboard extends AppCompatActivity implements VaccineAdapta
 
     @Override
     public void onClick(Vaccine vaccine) {
-        Log.w("TAG", "Ca marche");
+        Intent intent = new Intent(this, DetailsVaccine.class);
+        intent.putExtra(DetailsVaccine.VACCINE_KEY, vaccine);
+        startActivity(intent);
     }
 
     public void checkVaccinesQuantity(){
