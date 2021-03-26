@@ -2,6 +2,9 @@ package com.epsi.covidmanager.controller;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,6 +19,8 @@ import java.util.ArrayList;
 public class VaccineDashboard extends AppCompatActivity implements VaccineAdaptater.OnVaccineListener {
 
     private RecyclerView rv_dashboard_vaccine;
+    private TextView id_alert_vaccin_names;
+    private LinearLayout ly_alert_vaccins_quantity;
 
     private ArrayList<Vaccine> vaccines;
 
@@ -27,6 +32,9 @@ public class VaccineDashboard extends AppCompatActivity implements VaccineAdapta
         super.onCreate(savedInstanceState);
         setContentView(R.layout.vaccine_dashboard);
 
+        id_alert_vaccin_names = findViewById(R.id.id_alert_vaccin_names);
+        ly_alert_vaccins_quantity = findViewById(R.id.ly_alert_vaccins_quantity);
+
         rv_dashboard_vaccine = findViewById(R.id.rv_dashboard_vaccine);
 
         vaccines = new ArrayList<>();
@@ -34,6 +42,10 @@ public class VaccineDashboard extends AppCompatActivity implements VaccineAdapta
         for(int i = 0 ; i <= 2; i++){
             vaccines.add(new Vaccine());
         }
+
+        checkVaccinesQuantity();
+
+
         vaccineAdaptater = new VaccineAdaptater(vaccines, this);
         rv_dashboard_vaccine.setLayoutManager(new LinearLayoutManager(this));
         rv_dashboard_vaccine.setAdapter(vaccineAdaptater);
@@ -43,5 +55,20 @@ public class VaccineDashboard extends AppCompatActivity implements VaccineAdapta
     @Override
     public void onClick(Vaccine vaccine) {
         Log.w("TAG", "Ca marche");
+    }
+
+    public void checkVaccinesQuantity(){
+        String value = "";
+        for(Vaccine vaccine : vaccines){
+            if(vaccine.getNbPrev() < 500){
+                value += vaccine.getName().toUpperCase()+" ";
+            }
+        }
+        if(value != ""){
+            ly_alert_vaccins_quantity.setVisibility(View.VISIBLE);
+            id_alert_vaccin_names.setText(value);
+        }
+
+
     }
 }

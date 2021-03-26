@@ -6,4 +6,5 @@
     <string name="bt_connect">Connexion</string>
     <string name="img_logo_value">Logo covid manager</string>
     <string name="bt_add_slot">Ajouter un créneau</string>
+    <string name="tv_alert_vaccin_quantity">"Attention le nombre de vaccins est bas pour : "</string>
 </resources>
