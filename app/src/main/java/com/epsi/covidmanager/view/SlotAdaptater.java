@@ -13,6 +13,7 @@ import com.epsi.covidmanager.R;
 import com.epsi.covidmanager.model.beans.Slot;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class SlotAdaptater extends RecyclerView.Adapter<SlotAdaptater.ViewHolder> {
 
