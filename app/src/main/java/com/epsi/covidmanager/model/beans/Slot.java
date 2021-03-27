@@ -22,7 +22,7 @@ import java.util.List;
 public class Slot implements Serializable {
 
     private static final Calendar CALENDAR = Calendar.getInstance();
-    private static final DateFormat DATE_FORMAT =  new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
 
     private final String _id;
     private Date startTime;
@@ -30,32 +30,29 @@ public class Slot implements Serializable {
     private boolean isActive;
     private int nbReservedPlaces;
     private int nbInitialPlaces;
-    private Vial vial;
 
-    public Slot(String _id, Date startTime, Date endTime, Boolean isActive, int nbReservedPlaces, int nbInitialPlaces, Vial vial){
+    public Slot(String _id, Date startTime, Date endTime, Boolean isActive, int nbReservedPlaces, int nbInitialPlaces) {
         this.startTime = startTime;
         this.nbInitialPlaces = nbInitialPlaces;
         this.endTime = endTime;
         this.isActive = isActive;
         this.nbReservedPlaces = nbReservedPlaces;
-        this.vial = vial;
         this._id = _id;
         Logger.addLogAdapter(new AndroidLogAdapter());
     }
 
-    public Slot(Date startTime, Date endTime, Boolean isActive, int nbReservedPlaces,int nbInitialPlaces, Vial vial){
+    public Slot(Date startTime, Date endTime, Boolean isActive, int nbReservedPlaces, int nbInitialPlaces) {
         this.startTime = startTime;
         this.endTime = endTime;
         this.isActive = isActive;
         this.nbInitialPlaces = nbInitialPlaces;
         this.nbReservedPlaces = nbReservedPlaces;
-        this.vial = vial;
         this._id = null;
         Logger.addLogAdapter(new AndroidLogAdapter());
     }
 
 
-    public void slotDuration(){
+    public void slotDuration() {
 
         long test = endTime.getTime() - startTime.getTime();
 
@@ -77,8 +74,7 @@ public class Slot implements Serializable {
         long elapsedSeconds = test / secondsInMilli;
 
         Logger.w(DATE_FORMAT.format(startTime));
-        Logger.w(elapsedDays + "days, " + elapsedHours +  "hours, " + elapsedMinutes + "d minutes, " + elapsedSeconds +"seconds");
-
+        Logger.w(elapsedDays + "days, " + elapsedHours + "hours, " + elapsedMinutes + "d minutes, " + elapsedSeconds + "seconds");
 
 
     }
@@ -106,10 +102,6 @@ public class Slot implements Serializable {
         return nbReservedPlaces;
     }
 
-    public Vial getVial() {
-        return vial;
-    }
-
     public boolean isActive() {
         return isActive;
     }
@@ -132,12 +124,8 @@ public class Slot implements Serializable {
             ArrayList<Slot> slots = new ArrayList<>();
             List<ParseObject> results = query.find();
 
-            for(ParseObject result : results) {
-                for(Vial vial : vials) {
-                    if (vial.getId().equals(result.getString("vialId"))) {
-                        slots.add(new Slot(result.getObjectId(), result.getDate("startTime"), result.getDate("endTime"), result.getBoolean("isActive"), result.getInt("nbReservedPlaces"), result.getInt("nbInitialPlaces"), vial));
-                    }
-                }
+            for (ParseObject result : results) {
+                slots.add(new Slot(result.getObjectId(), result.getDate("startTime"), result.getDate("endTime"), result.getBoolean("isActive"), result.getInt("nbReservedPlaces"), result.getInt("nbInitialPlaces")));
             }
             return slots;
         } catch (ParseException | IndexOutOfBoundsException e) {
@@ -193,7 +181,6 @@ public class Slot implements Serializable {
         entity.put("endTime", slot.getEndTime());
         entity.put("nbReservedPlaces", slot.getNbReservedPlaces());
         entity.put("nbInitialPlaces", slot.getNbInitialPlaces());
-        entity.put("vialId", slot.getVial().getId());
         entity.put("isActive", slot.isActive());
 
         // Saves the new object.

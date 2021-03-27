@@ -16,17 +16,27 @@ public class Vial implements Serializable {
     private final String id;
     private int shotNumber;
     private final Vaccine vaccine;
+    private Slot slot;
+
+    public Vial(String _id, int shotNumber, Vaccine vaccine, Slot slot) {
+        this.shotNumber = shotNumber;
+        this.vaccine = vaccine;
+        this.id = _id;
+        this.slot = slot;
+    }
 
     public Vial(String _id, int shotNumber, Vaccine vaccine) {
         this.shotNumber = shotNumber;
         this.vaccine = vaccine;
         this.id = _id;
+        this.slot = null;
     }
 
     public Vial(int shotNumber, Vaccine vaccine) {
         this.shotNumber = shotNumber;
         this.vaccine = vaccine;
         this.id = null;
+        this.slot = null;
     }
 
     public int getShotNumber() {
@@ -41,7 +51,11 @@ public class Vial implements Serializable {
         return id;
     }
 
-    public static ArrayList<Vial> findAll(Context toastContext, ArrayList<Vaccine> vaccines) {
+    public Slot getSlot() {
+        return slot;
+    }
+
+    public static ArrayList<Vial> findAll(Context toastContext, ArrayList<Vaccine> vaccines, ArrayList<Slot> slots) {
 
         // Creates a new ParseQuery object to help us fetch MyCustomClass objects
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Vial");
@@ -54,7 +68,11 @@ public class Vial implements Serializable {
             for(ParseObject result : results) {
                 for(Vaccine vaccine : vaccines) {
                     if (vaccine.getId().equals(result.getString("vaccineId"))) {
-                        vials.add(new Vial(result.getObjectId(), result.getInt("shotNumber"), vaccine));
+                        for(Slot slot : slots) {
+                            if (slot.getId().equals(result.getString("slotId"))) {
+                                vials.add(new Vial(result.getObjectId(), result.getInt("shotNumber"), vaccine, slot));
+                            }
+                        }
                     }
                 }
             }
@@ -75,12 +93,22 @@ public class Vial implements Serializable {
         }
     }
 
-    public static boolean insert(Vial vial, Context toastContext) {
+    public void updateSlot(Slot newValue) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Vial");
+        try {
+            this.slot = newValue;
+            query.get(this.id).put("slotId", this.getSlot().getId());
+        } catch (ParseException e) {
+            Log.d("Slot", "Update slot problem");
+        }
+    }
+
+    public static boolean insert(Vial vial, Slot slot, Context toastContext) {
         ParseObject entity = new ParseObject("Vial");
 
         entity.put("shotNumber", vial.getShotNumber());
         entity.put("vaccineId", vial.getVaccine().getId());
-
+        entity.put("slotId", vial.getSlot().getId());
         // Saves the new object.
         // Notice that the SaveCallback is totally optional!
         try {

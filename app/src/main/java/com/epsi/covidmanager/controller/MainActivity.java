@@ -53,19 +53,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.bt_connection) {
-            if(etLogin.getText().toString().isEmpty()) {
+        if (v.getId() == R.id.bt_connection) {
+            if (etLogin.getText().toString().isEmpty()) {
                 Toast.makeText(MainActivity.this, "The email field shouldn't be empty", Toast.LENGTH_SHORT).show();
             } else if (etPassword.getText().toString().isEmpty()) {
                 Toast.makeText(MainActivity.this, "The password field shouldn't be empty", Toast.LENGTH_SHORT).show();
             } else {
                 Secretary secretary = Secretary.login(etLogin.getText().toString(), etPassword.getText().toString(), this);
-                if(secretary != null) {
+                if (secretary != null) {
                     vaccines = Vaccine.findAll(this);
                     if (vaccines != null) {
-                        vials = Vial.findAll(this, vaccines);
-                        if (vials != null) {
-                            slots = Slot.findAll(this, vials);
+                        slots = Slot.findAll(this, vials);
+                        if (slots != null) {
+                            vials = Vial.findAll(this, vaccines, slots);
                         }
                     }
                     Intent intent = new Intent(this, DashBoardActivity.class);

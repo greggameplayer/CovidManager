@@ -1,5 +1,6 @@
 package com.epsi.covidmanager.view;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +40,7 @@ public class SlotAdaptater extends RecyclerView.Adapter<SlotAdaptater.ViewHolder
         return new SlotAdaptater.ViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final Slot slot = slots.get(position);
@@ -48,12 +50,12 @@ public class SlotAdaptater extends RecyclerView.Adapter<SlotAdaptater.ViewHolder
         holder.tv_nb_doses.setText(Integer.toString(slot.getNbInitialPlaces()));
         holder.tv_doses_restantes.setText(Integer.toString(slot.getNbInitialPlaces() - slot.getNbReservedPlaces()));
 
-        for (vial: vials) {
+        /* for (vial: vials) {
             if (vial.getId() == Slot.getId()){
                 holder.tv_vaccin.setText(vial.getVaccin());
                 break;
             }
-        }
+        } */
 
         slot.slotDuration();
 
