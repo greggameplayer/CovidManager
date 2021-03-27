@@ -16,7 +16,11 @@ import com.epsi.covidmanager.R;
 import com.epsi.covidmanager.model.beans.Vaccine;
 import com.epsi.covidmanager.view.VaccineAdaptater;
 
+
+
 import java.util.ArrayList;
+
+import at.favre.lib.crypto.bcrypt.BCrypt;
 
 public class VaccineDashboard extends AppCompatActivity implements VaccineAdaptater.OnVaccineListener {
 
@@ -52,6 +56,10 @@ public class VaccineDashboard extends AppCompatActivity implements VaccineAdapta
         rv_dashboard_vaccine.setLayoutManager(new LinearLayoutManager(this));
         rv_dashboard_vaccine.setAdapter(vaccineAdaptater);
 
+        testBcrypt();
+
+
+
     }
 
     @Override
@@ -73,6 +81,17 @@ public class VaccineDashboard extends AppCompatActivity implements VaccineAdapta
             id_alert_vaccin_names.setText(value);
         }
 
+
+    }
+
+    private void testBcrypt(){
+        String password = "1234";
+        String bcryptHashString = BCrypt.withDefaults().hashToString(12, password.toCharArray());
+        BCrypt.Result result = BCrypt.verifyer().verify(password.toCharArray(), bcryptHashString);
+        if(result.verified == true){ Toast.makeText(this, "Bcrypt marche", Toast.LENGTH_SHORT).show();  }
+        else{
+            Toast.makeText(this, "Bcrypt marche pas", Toast.LENGTH_SHORT).show();
+        }
 
     }
 }

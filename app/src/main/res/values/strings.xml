@@ -7,8 +7,12 @@
     <string name="bt_add_slot">Add Slot</string>
     <string name="tv_alert_vaccin_quantity">Please note that the number of vaccines is low for :</string>
     <string name="tv_details_vaccine_quantity_all_time">Quantity (all time) :</string>
-    <string name="tv_details_vaccine_quantity_remain">Quantité (restante à distribuer) :</string>
+    <string name="tv_details_vaccine_quantity_remain">Quantity (remain to allocate) :</string>
     <string name="tv_details_vaccine_quantity_prev">Quantity (remain to allocate)</string>
     <string name="bt_details_vaccine_add_vaccine">Add new vial</string>
-    <string name="tv_form_vaccine_header">"Stock Entry : "</string>
+    <string name="tv_form_vaccine_header">Stock Entry : </string>
+    <string name="tv_form_vaccine_nbVial">"Number of Vials : "</string>
+    <string name="tv_form_vaccin_nb_dose">"Number of dose (per vial) : "</string>
+    <string name="bt_form_vaccine_add">Add</string>
+    <string name="bt_form_vaccine_return">Return</string>
 </resources>
