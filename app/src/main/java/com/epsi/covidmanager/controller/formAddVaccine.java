@@ -2,6 +2,7 @@ package com.epsi.covidmanager.controller;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +19,7 @@ public class formAddVaccine extends AppCompatActivity implements View.OnClickLis
     public final static String VACCINE_KEY = "VACCINE_KEY";
 
     private Vaccine vaccine;
+    private int nbVial, nbDose;
 
     private TextView tv_form_vaccine_name;
     private EditText et_form_vaccine_nbVial, et_form_vaccine_nbDose;
@@ -47,7 +49,12 @@ public class formAddVaccine extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         if(v.getId() == bt_form_vaccine_add.getId()){
-            Toast.makeText(this, "TO do", Toast.LENGTH_SHORT).show();
+            if(TextUtils.isEmpty(et_form_vaccine_nbDose.getText().toString()) || TextUtils.isEmpty(et_form_vaccine_nbVial.getText().toString()) ){
+                Toast.makeText(this, "Veuillez remplir tous les champs", Toast.LENGTH_SHORT).show();
+            }
+            else{
+                onAdd();
+            }
         }else{
             onReturn();
         }
@@ -56,5 +63,10 @@ public class formAddVaccine extends AppCompatActivity implements View.OnClickLis
 
     private void onReturn(){
         super.onBackPressed();
+    }
+    private void onAdd(){
+        nbVial = Integer.parseInt(et_form_vaccine_nbVial.getText().toString());
+        nbDose = Integer.parseInt(et_form_vaccine_nbDose.getText().toString());
+        //Compléter
     }
 }
