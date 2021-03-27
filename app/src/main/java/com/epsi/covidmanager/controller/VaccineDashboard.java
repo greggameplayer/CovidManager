@@ -13,7 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.epsi.covidmanager.R;
+import com.epsi.covidmanager.model.beans.Slot;
 import com.epsi.covidmanager.model.beans.Vaccine;
+import com.epsi.covidmanager.model.beans.Vial;
 import com.epsi.covidmanager.view.VaccineAdaptater;
 
 
@@ -29,6 +31,8 @@ public class VaccineDashboard extends AppCompatActivity implements VaccineAdapta
     private LinearLayout ly_alert_vaccins_quantity;
 
     private ArrayList<Vaccine> vaccines;
+    private ArrayList<Slot> slots;
+    private ArrayList<Vial> vials;
 
     private VaccineAdaptater vaccineAdaptater;
 
@@ -38,17 +42,20 @@ public class VaccineDashboard extends AppCompatActivity implements VaccineAdapta
         super.onCreate(savedInstanceState);
         setContentView(R.layout.vaccine_dashboard);
 
+        vaccines = (ArrayList<Vaccine>) getIntent().getSerializableExtra("vaccines");
+        slots = (ArrayList<Slot>) getIntent().getSerializableExtra("slots");
+        vials = (ArrayList<Vial>) getIntent().getSerializableExtra("vials");
+
         id_alert_vaccin_names = findViewById(R.id.id_alert_vaccin_names);
         ly_alert_vaccins_quantity = findViewById(R.id.ly_alert_vaccins_quantity);
 
         rv_dashboard_vaccine = findViewById(R.id.rv_dashboard_vaccine);
 
-        vaccines = new ArrayList<>();
 
         checkVaccinesQuantity();
 
 
-        vaccineAdaptater = new VaccineAdaptater(vaccines, this);
+        vaccineAdaptater = new VaccineAdaptater(vaccines, slots, vials, this);
         rv_dashboard_vaccine.setLayoutManager(new LinearLayoutManager(this));
         rv_dashboard_vaccine.setAdapter(vaccineAdaptater);
     }
@@ -57,13 +64,17 @@ public class VaccineDashboard extends AppCompatActivity implements VaccineAdapta
     public void onClick(Vaccine vaccine) {
         Intent intent = new Intent(this, DetailsVaccine.class);
         intent.putExtra(DetailsVaccine.VACCINE_KEY, vaccine);
+        intent.putExtra("vaccines", vaccines);
+        intent.putExtra("slots", slots);
+        intent.putExtra("vials", vials);
         startActivity(intent);
     }
 
     public void checkVaccinesQuantity(){
         String value = "";
         for(Vaccine vaccine : vaccines){
-            if(1 < 500){
+            int nb = quantityRemainToAllow(vaccine);
+            if(nb < 500){
                 value += vaccine.getName().toUpperCase()+" ";
             }
         }
@@ -72,6 +83,15 @@ public class VaccineDashboard extends AppCompatActivity implements VaccineAdapta
             id_alert_vaccin_names.setText(value);
         }
 
+    }
 
+    public int quantityRemainToAllow(Vaccine vaccine){
+        int nb = 0;
+        for(Vial vial : vials){
+            if(vial.getVaccine().getName().equals(vaccine.getName()) && vial.getSlot() == null){
+                nb = nb+vial.getShotNumber();
+            }
+        }
+        return nb;
     }
 }

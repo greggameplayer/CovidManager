@@ -9,7 +9,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.epsi.covidmanager.R;
+import com.epsi.covidmanager.model.beans.Slot;
 import com.epsi.covidmanager.model.beans.Vaccine;
+import com.epsi.covidmanager.model.beans.Vial;
 
 import java.util.ArrayList;
 
@@ -17,12 +19,17 @@ public class VaccineAdaptater extends RecyclerView.Adapter<VaccineAdaptater.View
 
     private ArrayList<Vaccine> vaccines;
     private VaccineAdaptater.OnVaccineListener onVaccineListener;
+    private ArrayList<Slot> slots;
+    private ArrayList<Vial> vials;
 
 
 
-    public VaccineAdaptater(ArrayList<Vaccine> vaccines, VaccineAdaptater.OnVaccineListener onVaccineListenerLister) {
+    public VaccineAdaptater(ArrayList<Vaccine> vaccines, ArrayList<Slot> slots, ArrayList<Vial> vials, VaccineAdaptater.OnVaccineListener onVaccineListenerLister) {
         this.vaccines = vaccines;
         this.onVaccineListener = onVaccineListenerLister;
+        this.slots = slots;
+        this.vials = vials;
+
     }
 
 
@@ -39,8 +46,8 @@ public class VaccineAdaptater extends RecyclerView.Adapter<VaccineAdaptater.View
         final Vaccine vaccine = vaccines.get(position);
 
         holder.tv_card_vaccine_name.setText(vaccine.getName());
-        holder.tv_card_vaccine_nb.setText("");
-        holder.tv_card_vaccine_nb_prev.setText("");
+        holder.tv_card_vaccine_nb.setText(quantityRemainToAllow(vaccine) + "");
+        holder.tv_card_vaccine_nb_prev.setText(quantityAllTime(vaccine) + "");
 
 
         holder.root.setOnClickListener(new View.OnClickListener() {
@@ -79,5 +86,25 @@ public class VaccineAdaptater extends RecyclerView.Adapter<VaccineAdaptater.View
     public interface OnVaccineListener{
         void onClick(Vaccine vaccine);
 
+    }
+
+    public int quantityAllTime(Vaccine vaccine){
+        int nb = 0;
+        for(Vial vial : vials){
+            if(vial.getVaccine().getName().equals(vaccine.getName())){
+                nb += vial.getShotNumber();
+            }
+        }
+        return nb;
+    }
+
+    public int quantityRemainToAllow(Vaccine vaccine){
+        int nb = 0;
+        for(Vial vial : vials){
+            if(vial.getVaccine().getName().equals(vaccine.getName()) && vial.getSlot() == null){
+                nb += vial.getShotNumber();
+            }
+        }
+        return nb;
     }
 }

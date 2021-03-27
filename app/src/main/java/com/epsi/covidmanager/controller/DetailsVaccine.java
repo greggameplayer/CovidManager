@@ -10,14 +10,21 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.epsi.covidmanager.R;
+import com.epsi.covidmanager.model.beans.Slot;
 import com.epsi.covidmanager.model.beans.Vaccine;
+import com.epsi.covidmanager.model.beans.Vial;
 
+import java.util.ArrayList;
 
 
 public class DetailsVaccine extends AppCompatActivity implements View.OnClickListener {
 
     public final static String VACCINE_KEY = "VACCINE_KEY";
     private Vaccine vaccine;
+
+    private ArrayList<Vaccine> vaccines;
+    private ArrayList<Slot> slots;
+    private ArrayList<Vial> vials;
 
     private Button bt_details_vaccine_add, bt_details_vaccine_return;
     private TextView tv_details_vaccine_quantity_prev, tv_details_vaccine_quantity_remain, tv_details_vaccine_quantity, tv_detail_vaccine_name;
@@ -28,6 +35,10 @@ public class DetailsVaccine extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.details_vaccine);
 
         vaccine = (Vaccine) getIntent().getExtras().getSerializable(VACCINE_KEY);
+
+        vaccines = (ArrayList<Vaccine>) getIntent().getSerializableExtra("vaccines");
+        slots = (ArrayList<Slot>) getIntent().getSerializableExtra("slots");
+        vials = (ArrayList<Vial>) getIntent().getSerializableExtra("vials");
 
         tv_detail_vaccine_name = findViewById(R.id.tv_detail_vaccine_name);
         tv_details_vaccine_quantity_prev = findViewById(R.id.tv_details_vaccine_quantity_prev);
@@ -56,6 +67,9 @@ public class DetailsVaccine extends AppCompatActivity implements View.OnClickLis
         }
         else{
             Intent intent = new Intent(this, VaccineDashboard.class);
+            intent.putExtra("vaccines", vaccines);
+            intent.putExtra("slots", slots);
+            intent.putExtra("vials", vials);
             startActivity(intent);
         }
 

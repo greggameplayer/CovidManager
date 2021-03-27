@@ -69,7 +69,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_weight="0"
-                        android:text="Doses prévisionnelles" />
+                        android:text="Doses (tout temps) : " />
 
                     <TextView
                         android:id="@+id/tv_vaccin"
