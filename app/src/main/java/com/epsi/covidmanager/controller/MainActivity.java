@@ -15,12 +15,22 @@ import android.widget.Toast;
 
 import com.epsi.covidmanager.R;
 import com.epsi.covidmanager.model.beans.Secretary;
+import com.epsi.covidmanager.model.beans.Slot;
+import com.epsi.covidmanager.model.beans.Vaccine;
+import com.epsi.covidmanager.model.beans.Vial;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 import com.parse.Parse;
+
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     Button btConnection;
     EditText etLogin, etPassword;
+
+    private ArrayList<Slot> slots = new ArrayList<>();
+    private ArrayList<Vial> vials = new ArrayList<>();
+    private ArrayList<Vaccine> vaccines = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,11 +61,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } else {
                 Secretary secretary = Secretary.login(etLogin.getText().toString(), etPassword.getText().toString(), this);
                 if(secretary != null) {
+                    vaccines = Vaccine.findAll(this);
+                    if (vaccines != null) {
+                        vials = Vial.findAll(this, vaccines);
+                        if (vials != null) {
+                            slots = Slot.findAll(this, vials);
+                        }
+                    }
                     Intent intent = new Intent(this, DashBoardActivity.class);
                     intent.putExtra("secretary", secretary);
+                    intent.putExtra("vaccines", vaccines);
+                    intent.putExtra("slots", slots);
+                    intent.putExtra("vials", vials);
                     startActivity(intent);
                 }
             }
         }
     }
+
+
 }

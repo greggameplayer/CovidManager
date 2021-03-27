@@ -27,23 +27,21 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
     private RecyclerView rv_card_slot;
     private Button bt_add_slot;
     //Donnees
-    private ArrayList<Slot> slots = new ArrayList<>();
-    private ArrayList<Vial> vials = new ArrayList<>();
-    private ArrayList<Vaccine> vaccines = new ArrayList<>();
+    private ArrayList<Slot> slots;
+    private ArrayList<Vial> vials;
+    private ArrayList<Vaccine> vaccines;
     //Outil
     private SlotAdaptater slotAdaptater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        vaccines = Vaccine.findAll(this);
-        if (vaccines != null) {
-            vials = Vial.findAll(this, vaccines);
-            if (vials != null) {
-                slots = Slot.findAll(this, vials);
-            }
-        }
         setContentView(R.layout.dashboard);
+
+        vaccines = (ArrayList<Vaccine>) getIntent().getSerializableExtra("vaccines");
+        slots = (ArrayList<Slot>) getIntent().getSerializableExtra("slots");
+        vials = (ArrayList<Vial>) getIntent().getSerializableExtra("vials");
+
         Logger.addLogAdapter(new AndroidLogAdapter());
         Log.d("vaccines", vaccines.toString());
         Log.d("vials", vials.toString());

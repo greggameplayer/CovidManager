@@ -45,21 +45,12 @@ public class VaccineDashboard extends AppCompatActivity implements VaccineAdapta
 
         vaccines = new ArrayList<>();
 
-        for(int i = 0 ; i <= 2; i++){
-            vaccines.add(new Vaccine());
-        }
-
         checkVaccinesQuantity();
 
 
         vaccineAdaptater = new VaccineAdaptater(vaccines, this);
         rv_dashboard_vaccine.setLayoutManager(new LinearLayoutManager(this));
         rv_dashboard_vaccine.setAdapter(vaccineAdaptater);
-
-        testBcrypt();
-
-
-
     }
 
     @Override
@@ -72,7 +63,7 @@ public class VaccineDashboard extends AppCompatActivity implements VaccineAdapta
     public void checkVaccinesQuantity(){
         String value = "";
         for(Vaccine vaccine : vaccines){
-            if(vaccine.getNbPrev() < 500){
+            if(1 < 500){
                 value += vaccine.getName().toUpperCase()+" ";
             }
         }
@@ -81,17 +72,6 @@ public class VaccineDashboard extends AppCompatActivity implements VaccineAdapta
             id_alert_vaccin_names.setText(value);
         }
 
-
-    }
-
-    private void testBcrypt(){
-        String password = "1234";
-        String bcryptHashString = BCrypt.withDefaults().hashToString(12, password.toCharArray());
-        BCrypt.Result result = BCrypt.verifyer().verify(password.toCharArray(), bcryptHashString);
-        if(result.verified == true){ Toast.makeText(this, "Bcrypt marche", Toast.LENGTH_SHORT).show();  }
-        else{
-            Toast.makeText(this, "Bcrypt marche pas", Toast.LENGTH_SHORT).show();
-        }
 
     }
 }

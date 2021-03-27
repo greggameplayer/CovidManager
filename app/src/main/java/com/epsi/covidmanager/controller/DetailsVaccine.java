@@ -38,9 +38,9 @@ public class DetailsVaccine extends AppCompatActivity implements View.OnClickLis
 
 
         tv_detail_vaccine_name.setText(vaccine.getName());
-        tv_details_vaccine_quantity_prev.setText(vaccine.getNb()+"");
+        tv_details_vaccine_quantity_prev.setText("Ajouter");
         tv_details_vaccine_quantity_remain.setText("Réfléchir sur la notion en groupe");
-        tv_details_vaccine_quantity.setText(vaccine.getNbPrev()+"");
+        tv_details_vaccine_quantity.setText("Ajouter");
 
         bt_details_vaccine_add.setOnClickListener(this);
         bt_details_vaccine_return.setOnClickListener(this);
