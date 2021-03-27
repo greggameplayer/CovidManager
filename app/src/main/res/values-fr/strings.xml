@@ -11,4 +11,5 @@
     <string name="tv_details_vaccine_quantity_remain">"Quanté restante à distribuer : "</string>
     <string name="tv_details_vaccine_quantity_prev">"Quantité restante à attribuer : "</string>
     <string name="bt_details_vaccine_add_vaccine">Ajouter des doses</string>
+    <string name="tv_form_vaccine_header">"Rentré de stock : "</string>
 </resources>

@@ -1,7 +1,9 @@
 package com.epsi.covidmanager.controller;
 
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -12,9 +14,10 @@ import com.epsi.covidmanager.model.beans.Vaccine;
 
 
 
-public class DetailsVaccine extends AppCompatActivity {
+public class DetailsVaccine extends AppCompatActivity implements View.OnClickListener {
 
     public final static String VACCINE_KEY = "VACCINE_KEY";
+    private Vaccine vaccine;
 
     private Button bt_details_vaccine_add;
     private TextView tv_details_vaccine_quantity_prev, tv_details_vaccine_quantity_remain, tv_details_vaccine_quantity, tv_detail_vaccine_name;
@@ -24,12 +27,13 @@ public class DetailsVaccine extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.details_vaccine);
 
-        Vaccine vaccine = (Vaccine) getIntent().getExtras().getSerializable(VACCINE_KEY);
+        vaccine = (Vaccine) getIntent().getExtras().getSerializable(VACCINE_KEY);
 
         tv_detail_vaccine_name = findViewById(R.id.tv_detail_vaccine_name);
         tv_details_vaccine_quantity_prev = findViewById(R.id.tv_details_vaccine_quantity_prev);
         tv_details_vaccine_quantity_remain = findViewById(R.id.tv_details_vaccine_quantity_remain);
         tv_details_vaccine_quantity = findViewById(R.id.tv_details_vaccine_quantity);
+        bt_details_vaccine_add = findViewById(R.id.bt_details_vaccine_add);
 
 
         tv_detail_vaccine_name.setText(vaccine.getName());
@@ -37,7 +41,14 @@ public class DetailsVaccine extends AppCompatActivity {
         tv_details_vaccine_quantity_remain.setText("Réfléchir sur la notion en groupe");
         tv_details_vaccine_quantity.setText(vaccine.getNbPrev()+"");
 
+        bt_details_vaccine_add.setOnClickListener(this);
 
     }
 
+    @Override
+    public void onClick(View v) {
+        Intent intent = new Intent(this, formAddVaccine.class);
+        intent.putExtra(formAddVaccine.VACCINE_KEY, vaccine);
+        startActivity(intent);
+    }
 }

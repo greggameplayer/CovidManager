@@ -10,4 +10,5 @@
     <string name="tv_details_vaccine_quantity_remain">Quantité (restante à distribuer) :</string>
     <string name="tv_details_vaccine_quantity_prev">Quantity (remain to allocate)</string>
     <string name="bt_details_vaccine_add_vaccine">Add new vial</string>
+    <string name="tv_form_vaccine_header">"Stock Entry : "</string>
 </resources>
