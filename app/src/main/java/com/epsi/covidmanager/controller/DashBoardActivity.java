@@ -51,7 +51,7 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
 
         bt_add_slot.setOnClickListener(this);
 
-        slotAdaptater = new SlotAdaptater(slots, this);
+        slotAdaptater = new SlotAdaptater(slots, vials, this);
         rv_card_slot.setLayoutManager(new LinearLayoutManager(this));
         rv_card_slot.setAdapter(slotAdaptater);
     }
@@ -66,13 +66,16 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
     public void onClick(View v) {
         //Intent intent = new Intent(this, .....class);
         //startActivity(intent);
-        Toast.makeText(this, "Implémenter le intent de onClick", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Implémenter le intent de onClick ajouter créneaux", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onClick(Slot slot) {
         Intent intent = new Intent(this, DetailsSlot.class);
         intent.putExtra(DetailsSlot.SLOT_KEY, slot);
+        intent.putExtra("vaccines", vaccines);
+        intent.putExtra("slots", slots);
+        intent.putExtra("vials", vials);
         startActivity(intent);
     }
 }

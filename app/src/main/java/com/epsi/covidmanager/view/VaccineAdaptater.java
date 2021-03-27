@@ -69,7 +69,7 @@ public class VaccineAdaptater extends RecyclerView.Adapter<VaccineAdaptater.View
 
             tv_card_vaccine_name = itemView.findViewById(R.id.tv_card_vaccine_name);
             tv_card_vaccine_nb = itemView.findViewById(R.id.tv_card_vaccine_nb);
-            tv_card_vaccine_nb_prev = itemView.findViewById(R.id.tv_card_vaccine_nb_prev);
+            tv_card_vaccine_nb_prev = itemView.findViewById(R.id.tv_vaccin);
             root = itemView.findViewById(R.id.root);
         }
 

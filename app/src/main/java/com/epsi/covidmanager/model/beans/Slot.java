@@ -29,10 +29,12 @@ public class Slot implements Serializable {
     private Date endTime;
     private boolean isActive;
     private int nbReservedPlaces;
+    private int nbInitialPlaces;
     private Vial vial;
 
-    public Slot(String _id, Date startTime, Date endTime, Boolean isActive, int nbReservedPlaces, Vial vial){
+    public Slot(String _id, Date startTime, Date endTime, Boolean isActive, int nbReservedPlaces, int nbInitialPlaces, Vial vial){
         this.startTime = startTime;
+        this.nbInitialPlaces = nbInitialPlaces;
         this.endTime = endTime;
         this.isActive = isActive;
         this.nbReservedPlaces = nbReservedPlaces;
@@ -41,10 +43,11 @@ public class Slot implements Serializable {
         Logger.addLogAdapter(new AndroidLogAdapter());
     }
 
-    public Slot(Date startTime, Date endTime, Boolean isActive, int nbReservedPlaces, Vial vial){
+    public Slot(Date startTime, Date endTime, Boolean isActive, int nbReservedPlaces,int nbInitialPlaces, Vial vial){
         this.startTime = startTime;
         this.endTime = endTime;
         this.isActive = isActive;
+        this.nbInitialPlaces = nbInitialPlaces;
         this.nbReservedPlaces = nbReservedPlaces;
         this.vial = vial;
         this._id = null;
@@ -95,6 +98,10 @@ public class Slot implements Serializable {
         return endTime;
     }
 
+    public int getNbInitialPlaces(){
+        return nbInitialPlaces;
+    }
+
     public int getNbReservedPlaces() {
         return nbReservedPlaces;
     }
@@ -106,6 +113,14 @@ public class Slot implements Serializable {
     public boolean isActive() {
         return isActive;
     }
+
+    public String getDates(){
+        SimpleDateFormat formater = new SimpleDateFormat("d/MM/yyyy");
+        if (!formater.format(this.getStartTime()).equals(formater.format(this.getEndTime()))){
+            return (formater.format(this.getStartTime()) +" - "+formater.format(this.getEndTime()));
+        }
+        return (formater.format(this.getStartTime()));
+    };
 
     public static ArrayList<Slot> findAll(Context toastContext, ArrayList<Vial> vials) {
 
@@ -120,7 +135,7 @@ public class Slot implements Serializable {
             for(ParseObject result : results) {
                 for(Vial vial : vials) {
                     if (vial.getId().equals(result.getString("vialId"))) {
-                        slots.add(new Slot(result.getObjectId(), result.getDate("startTime"), result.getDate("endTime"), result.getBoolean("isActive"), result.getInt("nbReservedPlaces"), vial));
+                        slots.add(new Slot(result.getObjectId(), result.getDate("startTime"), result.getDate("endTime"), result.getBoolean("isActive"), result.getInt("nbReservedPlaces"), result.getInt("nbInitialPlaces"), vial));
                     }
                 }
             }
@@ -177,6 +192,7 @@ public class Slot implements Serializable {
         entity.put("startTime", slot.getStartTime());
         entity.put("endTime", slot.getEndTime());
         entity.put("nbReservedPlaces", slot.getNbReservedPlaces());
+        entity.put("nbInitialPlaces", slot.getNbInitialPlaces());
         entity.put("vialId", slot.getVial().getId());
         entity.put("isActive", slot.isActive());
 
