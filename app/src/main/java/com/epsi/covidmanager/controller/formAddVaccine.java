@@ -55,8 +55,6 @@ public class formAddVaccine extends AppCompatActivity implements View.OnClickLis
     }
 
     private void onReturn(){
-        Intent intent = new Intent(this, DetailsVaccine.class);
-        intent.putExtra(DetailsVaccine.VACCINE_KEY, vaccine);
-        startActivity(intent);
+        super.onBackPressed();
     }
 }

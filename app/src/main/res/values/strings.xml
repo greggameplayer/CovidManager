@@ -15,4 +15,5 @@
     <string name="tv_form_vaccin_nb_dose">"Number of dose (per vial) : "</string>
     <string name="bt_form_vaccine_add">Add</string>
     <string name="bt_form_vaccine_return">Return</string>
+    <string name="bt_details_vaccine_return">Return</string>
 </resources>

@@ -16,4 +16,5 @@
     <string name="tv_form_vaccin_nb_dose">Nombre de dose (par flacon) :</string>
     <string name="bt_form_vaccine_add">Ajouter</string>
     <string name="bt_form_vaccine_return">Annuler</string>
+    <string name="bt_details_vaccine_return">Retour</string>
 </resources>
