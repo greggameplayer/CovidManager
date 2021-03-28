@@ -17,4 +17,6 @@
     <string name="bt_form_vaccine_add">Ajouter</string>
     <string name="bt_form_vaccine_return">Annuler</string>
     <string name="bt_details_vaccine_return">Retour</string>
+    <string name="drawer_opened">Tiroir ouvert</string>
+    <string name="drawer_closed">Tiroir fermé</string>
 </resources>

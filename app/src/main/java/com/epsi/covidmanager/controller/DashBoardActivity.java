@@ -1,9 +1,12 @@
 package com.epsi.covidmanager.controller;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -12,6 +15,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,16 +41,18 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
     private ArrayList<Vaccine> vaccines;
     //Outil
     private SlotAdaptater slotAdaptater;
+    private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dashboard);
-        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setTitle("");
 
-        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close);
+        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_opened, R.string.drawer_closed);
 
         // On définit notre ActionBarDrawerToggle comme listener.
         drawerLayout.addDrawerListener(drawerToggle);
@@ -82,6 +88,21 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @SuppressLint("RtlHardcoded")
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        if(android.R.id.home == item.getItemId()) {
+            if (!drawerLayout.isDrawerOpen(Gravity.LEFT)) {
+                drawerLayout.openDrawer(Gravity.LEFT);
+            }
+            else {
+                drawerLayout.closeDrawers();
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

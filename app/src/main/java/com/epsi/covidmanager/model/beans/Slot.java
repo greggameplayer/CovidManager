@@ -166,12 +166,23 @@ public class Slot implements Serializable {
 
     public void updateNbReservedPlaces(int newValue) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Slot");
-        try {
-            this.nbReservedPlaces = newValue;
-            query.get(this._id).put("nbReservedPlaces", this.nbReservedPlaces);
-        } catch (ParseException e) {
-            Log.d("Slot", "Update nbReservedPlaces problem");
-        }
+
+        // Retrieve the object by id
+        query.getInBackground(this._id, (object, e) -> {
+            if (e == null) {
+                //Object was successfully retrieved
+                // Update the fields we want to
+                this.nbReservedPlaces = newValue;
+                object.put("nbReservedPlaces", this.getNbReservedPlaces());
+
+                //All other fields will remain the same
+                object.saveInBackground();
+
+            } else {
+                // something went wrong
+                Log.d("ERRORUPDATE", e.getMessage());
+            }
+        });
     }
 
     public static boolean insert(Slot slot, Context toastContext) {
