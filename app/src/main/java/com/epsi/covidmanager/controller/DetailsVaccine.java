@@ -3,6 +3,7 @@ package com.epsi.covidmanager.controller;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -14,7 +15,10 @@ import com.epsi.covidmanager.model.beans.Slot;
 import com.epsi.covidmanager.model.beans.Vaccine;
 import com.epsi.covidmanager.model.beans.Vial;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 
 public class DetailsVaccine extends AppCompatActivity implements View.OnClickListener {
@@ -49,9 +53,9 @@ public class DetailsVaccine extends AppCompatActivity implements View.OnClickLis
 
 
         tv_detail_vaccine_name.setText(vaccine.getName());
-        tv_details_vaccine_quantity_prev.setText("Ajouter");
-        tv_details_vaccine_quantity_remain.setText("Réfléchir sur la notion en groupe");
-        tv_details_vaccine_quantity.setText("Ajouter");
+        tv_details_vaccine_quantity_prev.setText(quantityRemainToDistribute(vaccine) + "");
+        tv_details_vaccine_quantity_remain.setText(quantityRemainToAllow(vaccine) + "");
+        tv_details_vaccine_quantity.setText(quantityAllTime(vaccine) + "");
 
         bt_details_vaccine_add.setOnClickListener(this);
         bt_details_vaccine_return.setOnClickListener(this);
@@ -73,5 +77,55 @@ public class DetailsVaccine extends AppCompatActivity implements View.OnClickLis
             startActivity(intent);
         }
 
+    }
+
+    public int quantityAllTime(Vaccine vaccine){
+        int nb = 0;
+        for(Vial vial : vials){
+            if(vial.getVaccine().getName().equals(vaccine.getName())){
+                nb += vial.getShotNumber();
+            }
+        }
+        return nb;
+    }
+
+    public int quantityRemainToAllow(Vaccine vaccine){
+        int nb = 0;
+        for(Vial vial : vials){
+            Log.w("TAGI", vial.getSlot().getStartTime()+"");
+            if(vial.getVaccine().getName().equals(vaccine.getName()) && vial.getSlot() == null){
+                nb += vial.getShotNumber();
+            }
+        }
+        return nb;
+    }
+
+    public int quantityRemainToDistribute(Vaccine vaccine){
+        int nb = 0;
+        Date currentTime = Calendar.getInstance().getTime(), date;
+        long date1, date2;
+
+        date2 = currentTime.getTime();
+        for(Vial vial : vials){
+
+            if(vial.getSlot() != null){
+                date = vial.getSlot().getStartTime();
+                date1 = date.getTime();
+
+                long longDate=date.getTime();
+
+                if( vial.getVaccine().getName().equals(vaccine.getName()) && date1 > date2 ){
+                    nb += vial.getShotNumber();
+                }
+            }
+            else {
+                if( vial.getVaccine().getName().equals(vaccine.getName()) ){
+                    nb += vial.getShotNumber();
+                }
+            }
+
+
+        }
+        return nb;
     }
 }
