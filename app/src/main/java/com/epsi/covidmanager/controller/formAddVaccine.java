@@ -98,7 +98,7 @@ public class formAddVaccine extends AppCompatActivity implements View.OnClickLis
 
         for(int i = 0 ; i<= vialsBis.size() ; i++){
            try {
-               Vial.insert(vialsBis.get(i), null, this);
+               Vial.insert(vialsBis.get(i), this);
                vials.add(vialsBis.get(i));
            }
            catch (Exception e){

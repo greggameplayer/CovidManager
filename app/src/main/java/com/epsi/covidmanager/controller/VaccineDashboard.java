@@ -71,16 +71,16 @@ public class VaccineDashboard extends AppCompatActivity implements VaccineAdapta
     }
 
     public void checkVaccinesQuantity(){
-        String value = "";
+        StringBuilder value = new StringBuilder();
         for(Vaccine vaccine : vaccines){
             int nb = quantityRemainToAllow(vaccine);
             if(nb < 500){
-                value += vaccine.getName().toUpperCase()+" ";
+                value.append(vaccine.getName().toUpperCase()).append(" ");
             }
         }
-        if(value != ""){
+        if(!value.toString().equals("")){
             ly_alert_vaccins_quantity.setVisibility(View.VISIBLE);
-            id_alert_vaccin_names.setText(value);
+            id_alert_vaccin_names.setText(value.toString());
         }
 
     }

@@ -3,12 +3,16 @@ package com.epsi.covidmanager.controller;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,6 +25,7 @@ import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class DashBoardActivity extends AppCompatActivity implements SlotAdaptater.OnSlotListener, View.OnClickListener {
     //Composoants graphiques
@@ -37,6 +42,22 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dashboard);
+        DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close);
+
+        // On définit notre ActionBarDrawerToggle comme listener.
+        drawerLayout.addDrawerListener(drawerToggle);
+
+        // On précise que l'on souhaite afficher la ressource graphique
+        drawerToggle.setDrawerIndicatorEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
+        // On synchronise.
+        drawerToggle.syncState();
 
         vaccines = (ArrayList<Vaccine>) getIntent().getSerializableExtra("vaccines");
         slots = (ArrayList<Slot>) getIntent().getSerializableExtra("slots");
@@ -54,6 +75,13 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
         slotAdaptater = new SlotAdaptater(slots, vials, this);
         rv_card_slot.setLayoutManager(new LinearLayoutManager(this));
         rv_card_slot.setAdapter(slotAdaptater);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
     @Override

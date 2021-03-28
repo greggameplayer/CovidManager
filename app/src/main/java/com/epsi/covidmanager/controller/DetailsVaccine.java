@@ -1,6 +1,7 @@
 package com.epsi.covidmanager.controller;
 
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,6 +33,7 @@ public class DetailsVaccine extends AppCompatActivity implements View.OnClickLis
     private Button bt_details_vaccine_add, bt_details_vaccine_return;
     private TextView tv_details_vaccine_quantity_prev, tv_details_vaccine_quantity_remain, tv_details_vaccine_quantity, tv_detail_vaccine_name;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

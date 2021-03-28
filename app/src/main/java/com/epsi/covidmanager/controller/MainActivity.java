@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             vials = Vial.findAll(this, vaccines, slots);
                         }
                     }
-                    Intent intent = new Intent(this, VaccineDashboard.class);
+                    Intent intent = new Intent(this, DashBoardActivity.class);
                     intent.putExtra("secretary", secretary);
                     intent.putExtra("vaccines", vaccines);
                     intent.putExtra("slots", slots);
