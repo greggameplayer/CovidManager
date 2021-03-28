@@ -102,6 +102,7 @@ public class DetailsSlot extends AppCompatActivity implements View.OnClickListen
 
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onClick(View v) {
         if(v == bt_less){
@@ -125,12 +126,18 @@ public class DetailsSlot extends AppCompatActivity implements View.OnClickListen
             tv_nb_places.setText(nbPlacesReserved + "/" + slot.getNbInitialPlaces());
         }
         else if(v == bt_valider){
-            Intent DashBoardActivity = new Intent(context, DashBoardActivity.class);
-            DashBoardActivity.putExtra("vaccines", vaccines);
-            DashBoardActivity.putExtra("slots", slots);
-            DashBoardActivity.putExtra("vials", vials);
-            startActivity(DashBoardActivity);
-            slot.updateNbReservedPlaces(nbPlacesReserved);
+            for (Slot slot1 : slots) {
+                if (slot1.getId().equals(slot.getId())) {
+                    slot1.updateNbReservedPlaces(nbPlacesReserved, (el) -> {
+                        Intent DashBoardActivity = new Intent(context, DashBoardActivity.class);
+                        DashBoardActivity.putExtra("vaccines", vaccines);
+                        DashBoardActivity.putExtra("slots", slots);
+                        DashBoardActivity.putExtra("vials", vials);
+                        startActivity(DashBoardActivity);
+                    });
+                    break;
+                }
+            }
         }
         else if (v == bt_modifier){
             Toast.makeText(this, "Accès à la page de modification", Toast.LENGTH_SHORT).show();
@@ -142,12 +149,18 @@ public class DetailsSlot extends AppCompatActivity implements View.OnClickListen
             alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Valider",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            Intent DashBoardActivity = new Intent(context, DashBoardActivity.class);
-                            DashBoardActivity.putExtra("vaccines", vaccines);
-                            DashBoardActivity.putExtra("slots", slots);
-                            DashBoardActivity.putExtra("vials", vials);
-                            startActivity(DashBoardActivity);
-                            slot.delete();
+                            for (Slot slot1 : slots) {
+                                if (slot1.getId().equals(slot.getId())) {
+                                    slot1.delete((el) -> {
+                                        Intent DashBoardActivity = new Intent(context, DashBoardActivity.class);
+                                        DashBoardActivity.putExtra("vaccines", vaccines);
+                                        DashBoardActivity.putExtra("slots", slots);
+                                        DashBoardActivity.putExtra("vials", vials);
+                                        startActivity(DashBoardActivity);
+                                    });
+                                    break;
+                                }
+                            }
                         }
                     });
             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Annuler",

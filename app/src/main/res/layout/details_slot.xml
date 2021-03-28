@@ -140,7 +140,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="0sp"
-            app:icon="@drawable/minus__1_"
+            app:icon="@drawable/minus"
             app:iconGravity="textTop"
             app:iconPadding="0dp" />
 

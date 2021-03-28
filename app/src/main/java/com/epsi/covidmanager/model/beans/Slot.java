@@ -9,6 +9,7 @@ import com.orhanobut.logger.Logger;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 
 import java.io.Serializable;
 
@@ -137,14 +138,25 @@ public class Slot implements Serializable {
         return null;
     }
 
-    public void delete() {
+    public void delete(SaveCallback callback) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Slot");
-        try {
-            this.isActive = false;
-            query.get(this._id).put("isActive", this.isActive);
-        } catch (ParseException e) {
-            Log.d("Slot", "Delete problem");
-        }
+
+        // Retrieve the object by id
+        query.getInBackground(this._id, (object, e) -> {
+            if (e == null) {
+                //Object was successfully retrieved
+                // Update the fields we want to
+                this.isActive = false;
+                object.put("isActive", this.isActive());
+
+                //All other fields will remain the same
+                object.saveInBackground(callback);
+
+            } else {
+                // something went wrong
+                Log.d("ERRORUPDATE", e.getMessage());
+            }
+        });
     }
 
     public void updateStartTime(Date newValue) {
@@ -167,7 +179,7 @@ public class Slot implements Serializable {
         }
     }
 
-    public void updateNbReservedPlaces(int newValue) {
+    public void updateNbReservedPlaces(int newValue, SaveCallback callback) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Slot");
 
         // Retrieve the object by id
@@ -179,7 +191,7 @@ public class Slot implements Serializable {
                 object.put("nbReservedPlaces", this.getNbReservedPlaces());
 
                 //All other fields will remain the same
-                object.saveInBackground();
+                object.saveInBackground(callback);
 
             } else {
                 // something went wrong
