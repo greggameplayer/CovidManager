@@ -63,7 +63,7 @@ public class VaccineDashboard extends AppCompatActivity implements VaccineAdapta
     @Override
     public void onClick(Vaccine vaccine) {
         Intent intent = new Intent(this, DetailsVaccine.class);
-        intent.putExtra(DetailsVaccine.VACCINE_KEY, vaccine);
+        intent.putExtra("vaccine", vaccine);
         intent.putExtra("vaccines", vaccines);
         intent.putExtra("slots", slots);
         intent.putExtra("vials", vials);

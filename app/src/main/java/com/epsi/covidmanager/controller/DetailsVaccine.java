@@ -23,7 +23,6 @@ import java.util.Date;
 
 public class DetailsVaccine extends AppCompatActivity implements View.OnClickListener {
 
-    public final static String VACCINE_KEY = "VACCINE_KEY";
     private Vaccine vaccine;
 
     private ArrayList<Vaccine> vaccines;
@@ -38,7 +37,8 @@ public class DetailsVaccine extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.details_vaccine);
 
-        vaccine = (Vaccine) getIntent().getExtras().getSerializable(VACCINE_KEY);
+        vaccine = (Vaccine) getIntent().getExtras().getSerializable("vaccine");
+
 
         vaccines = (ArrayList<Vaccine>) getIntent().getSerializableExtra("vaccines");
         slots = (ArrayList<Slot>) getIntent().getSerializableExtra("slots");
@@ -66,7 +66,10 @@ public class DetailsVaccine extends AppCompatActivity implements View.OnClickLis
     public void onClick(View v) {
         if(v.getId() == bt_details_vaccine_add.getId()){
             Intent intent = new Intent(this, formAddVaccine.class);
-            intent.putExtra(formAddVaccine.VACCINE_KEY, vaccine);
+            intent.putExtra("vaccine", vaccine);
+            intent.putExtra("vaccines", vaccines);
+            intent.putExtra("slots", slots);
+            intent.putExtra("vials", vials);
             startActivity(intent);
         }
         else{
@@ -92,7 +95,6 @@ public class DetailsVaccine extends AppCompatActivity implements View.OnClickLis
     public int quantityRemainToAllow(Vaccine vaccine){
         int nb = 0;
         for(Vial vial : vials){
-            Log.w("TAGI", vial.getSlot().getStartTime()+"");
             if(vial.getVaccine().getName().equals(vaccine.getName()) && vial.getSlot() == null){
                 nb += vial.getShotNumber();
             }
@@ -123,8 +125,6 @@ public class DetailsVaccine extends AppCompatActivity implements View.OnClickLis
                     nb += vial.getShotNumber();
                 }
             }
-
-
         }
         return nb;
     }

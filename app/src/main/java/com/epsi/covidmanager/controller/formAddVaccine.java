@@ -3,6 +3,7 @@ package com.epsi.covidmanager.controller;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,14 +13,23 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.epsi.covidmanager.R;
+import com.epsi.covidmanager.model.beans.Slot;
 import com.epsi.covidmanager.model.beans.Vaccine;
+import com.epsi.covidmanager.model.beans.Vial;
+import com.parse.ParseException;
+
+import java.util.ArrayList;
 
 public class formAddVaccine extends AppCompatActivity implements View.OnClickListener {
 
-    public final static String VACCINE_KEY = "VACCINE_KEY";
 
     private Vaccine vaccine;
     private int nbVial, nbDose;
+
+    private ArrayList<Vaccine> vaccines;
+    private ArrayList<Slot> slots;
+    private ArrayList<Vial> vials;
+
 
     private TextView tv_form_vaccine_name;
     private EditText et_form_vaccine_nbVial, et_form_vaccine_nbDose;
@@ -30,7 +40,11 @@ public class formAddVaccine extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.form_vaccine);
 
-        Vaccine vaccine = (Vaccine) getIntent().getExtras().getSerializable(VACCINE_KEY);
+        vaccine = (Vaccine) getIntent().getExtras().getSerializable("vaccine");
+
+        vaccines = (ArrayList<Vaccine>) getIntent().getSerializableExtra("vaccines");
+        slots = (ArrayList<Slot>) getIntent().getSerializableExtra("slots");
+        vials = (ArrayList<Vial>) getIntent().getSerializableExtra("vials");
 
         et_form_vaccine_nbVial = findViewById(R.id.et_form_vaccine_nbVial);
         et_form_vaccine_nbDose = findViewById(R.id.et_form_vaccine_nbDose);
@@ -54,6 +68,7 @@ public class formAddVaccine extends AppCompatActivity implements View.OnClickLis
             }
             else{
                 onAdd();
+                onReturn();
             }
         }else{
             onReturn();
@@ -62,11 +77,34 @@ public class formAddVaccine extends AppCompatActivity implements View.OnClickLis
     }
 
     private void onReturn(){
-        super.onBackPressed();
+        Intent intent = new Intent(this, DetailsVaccine.class);
+        intent.putExtra("vaccine", vaccine);
+        intent.putExtra("vaccines", vaccines);
+        intent.putExtra("slots", slots);
+        intent.putExtra("vials", vials);
+        startActivity(intent);
     }
     private void onAdd(){
+
+        ArrayList<Vial> vialsBis = new ArrayList<>();
+
         nbVial = Integer.parseInt(et_form_vaccine_nbVial.getText().toString());
         nbDose = Integer.parseInt(et_form_vaccine_nbDose.getText().toString());
-        //Compléter
+
+
+        for(int i = 0 ; i<= nbVial ; i++){
+            vialsBis.add(new Vial(nbDose, vaccine));
+        }
+
+        for(int i = 0 ; i<= vialsBis.size() ; i++){
+           try {
+               Vial.insert(vialsBis.get(i), null, this);
+               vials.add(vialsBis.get(i));
+           }
+           catch (Exception e){
+               Toast.makeText(this, "L'insertion de données a échoué", Toast.LENGTH_SHORT).show();
+           }
+        }
+
     }
 }
