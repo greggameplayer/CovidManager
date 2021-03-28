@@ -8,12 +8,12 @@
     <string name="bt_add_slot">Ajouter un créneau</string>
     <string name="tv_alert_vaccin_quantity">"Attention le nombre de vaccins est bas pour : "</string>
     <string name="tv_details_vaccine_quantity_all_time">"Quantité (tout temps) : "</string>
-    <string name="tv_details_vaccine_quantity_remain">"Quanté restante à distribuer : "</string>
+    <string name="tv_details_vaccine_quantity_remain">"Quantité restante à distribuer : "</string>
     <string name="tv_details_vaccine_quantity_prev">"Quantité restante à attribuer : "</string>
     <string name="bt_details_vaccine_add_vaccine">Ajouter des doses</string>
     <string name="tv_form_vaccine_header">"Rentré de stock : "</string>
     <string name="tv_form_vaccine_nbVial">"Nombre de Flacons : "</string>
-    <string name="tv_form_vaccin_nb_dose">Nombre de dose (par flacon) :</string>
+    <string name="tv_form_vaccin_nb_dose">Nombre de doses (par flacon) :</string>
     <string name="bt_form_vaccine_add">Ajouter</string>
     <string name="bt_form_vaccine_return">Annuler</string>
     <string name="bt_details_vaccine_return">Retour</string>

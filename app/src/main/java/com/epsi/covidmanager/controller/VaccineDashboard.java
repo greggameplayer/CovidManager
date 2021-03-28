@@ -75,7 +75,7 @@ public class VaccineDashboard extends AppCompatActivity implements VaccineAdapta
         for(Vaccine vaccine : vaccines){
             int nb = quantityRemainToAllow(vaccine);
             if(nb < 500){
-                value.append(vaccine.getName().toUpperCase()).append(" ");
+                value.append(vaccine.getName().toUpperCase()).append(" \n");
             }
         }
         if(!value.toString().equals("")){

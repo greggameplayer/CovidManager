@@ -26,6 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:background="#F13636"
+        android:orientation="vertical"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
         android:visibility="gone"
@@ -37,14 +38,19 @@
             android:id="@+id/textView8"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
             android:text="@string/tv_alert_vaccin_quantity"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/id_alert_vaccin_names"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textColor="#FFFFFF" />
+            android:layout_gravity="center_horizontal"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
