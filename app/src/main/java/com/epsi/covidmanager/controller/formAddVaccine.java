@@ -92,14 +92,22 @@ public class formAddVaccine extends AppCompatActivity implements View.OnClickLis
         nbDose = Integer.parseInt(et_form_vaccine_nbDose.getText().toString());
 
 
-        for(int i = 0 ; i<= nbVial ; i++){
+        for(int i = 0 ; i < nbVial ; i++){
             vialsBis.add(new Vial(nbDose, vaccine));
         }
 
-        for(int i = 0 ; i<= vialsBis.size() ; i++){
+        Log.w("TAGI", vialsBis.toString());
+
+        for(Vial vial : vialsBis){
            try {
-               Vial.insert(vialsBis.get(i), this);
-               vials.add(vialsBis.get(i));
+               boolean bool =  Vial.insert(vial, this);
+               if(bool){
+                   Toast.makeText(this, "Ca marche", Toast.LENGTH_SHORT).show();
+               }
+               else{
+                   Toast.makeText(this, "Ca marche pas", Toast.LENGTH_SHORT).show();
+               }
+               vials.add(vial);
            }
            catch (Exception e){
                Toast.makeText(this, "L'insertion de données a échoué", Toast.LENGTH_SHORT).show();
