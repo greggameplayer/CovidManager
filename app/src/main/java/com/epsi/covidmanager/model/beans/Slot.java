@@ -107,11 +107,14 @@ public class Slot implements Serializable {
     }
 
     public String getDates(){
-        SimpleDateFormat formater = new SimpleDateFormat("d/MM/yyyy");
-        if (!formater.format(this.getStartTime()).equals(formater.format(this.getEndTime()))){
-            return (formater.format(this.getStartTime()) +" - "+formater.format(this.getEndTime()));
+        SimpleDateFormat formaterFull = new SimpleDateFormat("d/MM/yyyy hh:mm");
+        SimpleDateFormat formaterDMY = new SimpleDateFormat("d/MM/yyyy");
+        SimpleDateFormat formaterHM = new SimpleDateFormat("hh:mm");
+        String date = formaterDMY.format(this.getStartTime())+ "   " + formaterHM.format(this.getStartTime()) + " - " + formaterHM.format(this.getEndTime());
+        if (!formaterDMY.format(this.getStartTime()).equals(formaterDMY.format(this.getEndTime()))){
+            date = formaterFull.format(this.getStartTime()) +" - "+formaterFull.format(this.getEndTime());
         }
-        return (formater.format(this.getStartTime()));
+        return (date);
     };
 
     public static ArrayList<Slot> findAll(Context toastContext, ArrayList<Vial> vials) {
