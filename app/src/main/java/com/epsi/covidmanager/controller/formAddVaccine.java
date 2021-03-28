@@ -95,15 +95,11 @@ public class formAddVaccine extends AppCompatActivity implements View.OnClickLis
             vialsBis.add(new Vial(nbDose, vaccine));
         }
 
-        Log.w("TAGI", vialsBis.toString());
+        vials.addAll(vialsBis);
 
-        for(Vial vial : vialsBis){
-               Vial.insert(vial, (el) -> {
-                   Toast.makeText(this, "Ca marche", Toast.LENGTH_SHORT).show();
-                   vials.add(vial);
-                   onReturn();
-               });
-        }
+        Log.w("TAGI", vialsBis.toString());
+        Vial.insert(vialsBis);
+        onReturn();
 
     }
 }

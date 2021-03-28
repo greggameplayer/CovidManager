@@ -12,6 +12,7 @@ import com.parse.SaveCallback;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Vial implements Serializable {
     private final String id;
@@ -75,6 +76,7 @@ public class Vial implements Serializable {
                             } else {
                                 vials.add(new Vial(result.getObjectId(), result.getInt("shotNumber"), vaccine));
                             }
+                            break;
                         }
                     }
                 }
@@ -143,5 +145,11 @@ public class Vial implements Serializable {
         entity.put("shotNumber", vial.getShotNumber());
         entity.put("vaccineId", vial.getVaccine().getId());
         entity.saveInBackground(callback);
+    }
+
+    public static void insert(ArrayList<Vial> vials) {
+        for (Vial vial : vials) {
+            Vial.insert(vial, (el) -> {});
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.epsi.covidmanager.view;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,18 +91,21 @@ public class VaccineAdaptater extends RecyclerView.Adapter<VaccineAdaptater.View
 
     public int quantityAllTime(Vaccine vaccine){
         int nb = 0;
+        int i = 0;
         for(Vial vial : vials){
-            if(vial.getVaccine().getName().equals(vaccine.getName())){
+            if(vial.getVaccine().getId().equals(vaccine.getId())){
                 nb += vial.getShotNumber();
+                i++;
             }
         }
+        Log.d("I", Integer.toString(i));
         return nb;
     }
 
     public int quantityRemainToAllow(Vaccine vaccine){
         int nb = 0;
         for(Vial vial : vials){
-            if(vial.getVaccine().getName().equals(vaccine.getName()) && vial.getSlot() == null){
+            if(vial.getVaccine().getId().equals(vaccine.getId()) && vial.getSlot() == null){
                 nb += vial.getShotNumber();
             }
         }

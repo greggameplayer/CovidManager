@@ -23,6 +23,7 @@ import com.epsi.covidmanager.model.beans.Vaccine;
 import com.epsi.covidmanager.model.beans.Vial;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class DetailsSlot extends AppCompatActivity implements View.OnClickListener {
 
@@ -84,7 +85,7 @@ public class DetailsSlot extends AppCompatActivity implements View.OnClickListen
         tv_slot_details_date.setText(slot.getDates());
         tv_doses_prevues.setText(Integer.toString(slot.getNbInitialPlaces()));
         for (Vial vial: vials) {
-            if (vial.getSlot().getId().equals(slot.getId())){
+            if (vial.getSlot() != null && vial.getSlot().getId().equals(slot.getId())){
                 tv_vaccin2.setText(vial.getVaccine().getName());
                 break;
             }
@@ -92,14 +93,18 @@ public class DetailsSlot extends AppCompatActivity implements View.OnClickListen
 
         int stock = 0;
         for (Vial vial: vials) {
-            if (vial.getSlot().getId().equals(slot.getId())){
-                stock += vial.getShotNumber();
+            if (vial.getSlot() != null) {
+                Log.d("TESTSLOT", vial.getSlot().getId());
+                Log.d("TESTSLOT2", slot.getId());
+            }
+            if (vial.getSlot() != null && vial.getSlot().getId().equals(slot.getId())){
+                Log.d("TEST", Integer.toString(vial.getShotNumber()));
+                stock = Integer.sum(stock, vial.getShotNumber());
             }
         }
         tv_stock.setText(Integer.toString(stock));
         tv_nb_places.setText(nbPlacesReserved + "/" + slot.getNbInitialPlaces());
-
-
+        bt_valider.setEnabled(false);
     }
 
     @SuppressLint("SetTextI18n")
@@ -107,21 +112,29 @@ public class DetailsSlot extends AppCompatActivity implements View.OnClickListen
     public void onClick(View v) {
         if(v == bt_less){
             nbPlacesReserved--;
-            if (nbPlacesReserved == 0){
+            if (nbPlacesReserved == slot.getNbReservedPlaces()) {
+                bt_valider.setEnabled(false);
+            } else if (nbPlacesReserved == 0){
+                bt_valider.setEnabled(true);
                 bt_less.setEnabled(false);
             }
             else{
+                bt_valider.setEnabled(true);
                 bt_plus.setEnabled(true);
             }
             tv_nb_places.setText(nbPlacesReserved + "/" + slot.getNbInitialPlaces());
         }
         else if(v == bt_plus){
             nbPlacesReserved++;
-            if (nbPlacesReserved == slot.getNbInitialPlaces()){
+            if (nbPlacesReserved == slot.getNbReservedPlaces()) {
+                bt_valider.setEnabled(false);
+            } else if (nbPlacesReserved == slot.getNbInitialPlaces()){
                 bt_plus.setEnabled(false);
+                bt_valider.setEnabled(true);
             }
             else{
                 bt_less.setEnabled(true);
+                bt_valider.setEnabled(true);
             }
             tv_nb_places.setText(nbPlacesReserved + "/" + slot.getNbInitialPlaces());
         }

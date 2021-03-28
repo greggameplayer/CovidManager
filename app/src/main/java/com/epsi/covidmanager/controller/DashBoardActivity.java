@@ -1,6 +1,7 @@
 package com.epsi.covidmanager.controller;
 
 import android.annotation.SuppressLint;
+import android.content.ClipData;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -25,6 +28,7 @@ import com.epsi.covidmanager.model.beans.Vaccine;
 import com.epsi.covidmanager.model.beans.Vial;
 import com.epsi.covidmanager.R;
 import com.epsi.covidmanager.view.SlotAdaptater;
+import com.google.android.material.navigation.NavigationView;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 
@@ -35,6 +39,10 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
     //Composoants graphiques
     private RecyclerView rv_card_slot;
     private Button bt_add_slot;
+    private MenuItem itDisconnect;
+    private MenuItem vaccineDashboard;
+    private MenuItem slotDashboard;
+    private NavigationView navigationView;
     //Donnees
     private ArrayList<Slot> slots;
     private ArrayList<Vial> vials;
@@ -44,6 +52,8 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
     //Outil
     private SlotAdaptater slotAdaptater;
     private DrawerLayout drawerLayout;
+    private LinearLayout ly_alert_vaccins_quantity;
+    private TextView id_alert_vaccin_names;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +63,7 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setTitle("");
+        drawerLayout.setStatusBarBackgroundColor(getResources().getColor(R.color.design_default_color_background, getTheme()));
 
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_opened, R.string.drawer_closed);
 
@@ -89,29 +100,42 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
         Log.d("slots", slots.toString());
         rv_card_slot = findViewById(R.id.rv_card_slot);
         bt_add_slot = findViewById(R.id.bt_add_slot);
+        ly_alert_vaccins_quantity = findViewById(R.id.ly_alert_vaccins_quantity);
+        id_alert_vaccin_names = findViewById(R.id.id_alert_vaccin_names);
+        checkVaccinesQuantity();
 
         bt_add_slot.setOnClickListener(this);
+
+        navigationView = findViewById(R.id.navigation);
+
+        itDisconnect = navigationView.getMenu().findItem(R.id.disconnect);
+
+        Intent mainActivity = new Intent(this, MainActivity.class);
+        itDisconnect.setIntent(mainActivity);
+
+        vaccineDashboard = navigationView.getMenu().findItem(R.id.dashboardVaccines);
+        Intent vaccineDashboardIntent = new Intent(this, VaccineDashboard.class);
+        vaccineDashboardIntent.putExtra("vaccines", vaccines);
+        vaccineDashboardIntent.putExtra("slots", slots);
+        vaccineDashboardIntent.putExtra("vials", vials);
+        vaccineDashboard.setIntent(vaccineDashboardIntent);
+
+        slotDashboard = navigationView.getMenu().findItem(R.id.dashboardSlots);
+
+        slotDashboard.setChecked(true);
 
         slotAdaptater = new SlotAdaptater(displayedSlots, displayedVials, this);
         rv_card_slot.setLayoutManager(new LinearLayoutManager(this));
         rv_card_slot.setAdapter(slotAdaptater);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
     @SuppressLint("RtlHardcoded")
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        if(android.R.id.home == item.getItemId()) {
+        if (android.R.id.home == item.getItemId()) {
             if (!drawerLayout.isDrawerOpen(Gravity.LEFT)) {
                 drawerLayout.openDrawer(Gravity.LEFT);
-            }
-            else {
+            } else {
                 drawerLayout.closeDrawers();
             }
         }
@@ -127,9 +151,9 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
 
     @Override
     public void onClick(View v) {
+        Toast.makeText(this, "Implémenter le intent de onClick ajouter créneaux", Toast.LENGTH_SHORT).show();
         //Intent intent = new Intent(this, .....class);
         //startActivity(intent);
-        Toast.makeText(this, "Implémenter le intent de onClick ajouter créneaux", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -140,5 +164,30 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
         intent.putExtra("slots", slots);
         intent.putExtra("vials", vials);
         startActivity(intent);
+    }
+
+    public void checkVaccinesQuantity(){
+        StringBuilder value = new StringBuilder();
+        for(Vaccine vaccine : vaccines){
+            int nb = quantityRemainToAllow(vaccine);
+            if(nb < 500){
+                value.append(vaccine.getName().toUpperCase()).append(" \n");
+            }
+        }
+        if(!value.toString().equals("")){
+            ly_alert_vaccins_quantity.setVisibility(View.VISIBLE);
+            id_alert_vaccin_names.setText(value.toString());
+        }
+
+    }
+
+    public int quantityRemainToAllow(Vaccine vaccine){
+        int nb = 0;
+        for(Vial vial : vials){
+            if(vial.getVaccine().getName().equals(vaccine.getName()) && vial.getSlot() == null){
+                nb = nb+vial.getShotNumber();
+            }
+        }
+        return nb;
     }
 }

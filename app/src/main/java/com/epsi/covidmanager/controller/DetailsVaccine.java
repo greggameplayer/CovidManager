@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -129,5 +130,11 @@ public class DetailsVaccine extends AppCompatActivity implements View.OnClickLis
             }
         }
         return nb;
+    }
+
+    @Override
+    public void onBackPressed() {
+        Toast.makeText(this, "It's impossible to go backward", Toast.LENGTH_SHORT).show();
+        moveTaskToBack(false);
     }
 }

@@ -79,5 +79,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        Toast.makeText(this, "It's impossible to go backward", Toast.LENGTH_SHORT).show();
+        moveTaskToBack(false);
+    }
+
 
 }
