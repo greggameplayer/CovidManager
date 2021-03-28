@@ -40,6 +40,7 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
     private ArrayList<Vial> vials;
     private ArrayList<Vaccine> vaccines;
     private ArrayList<Slot> displayedSlots = new ArrayList<>();
+    private ArrayList<Vial> displayedVials = new ArrayList<>();
     //Outil
     private SlotAdaptater slotAdaptater;
     private DrawerLayout drawerLayout;
@@ -70,6 +71,12 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
         slots = (ArrayList<Slot>) getIntent().getSerializableExtra("slots");
         vials = (ArrayList<Vial>) getIntent().getSerializableExtra("vials");
 
+        for (Vial vial : vials) {
+            if (vial.getSlot() != null) {
+                displayedVials.add(vial);
+            }
+        }
+
         for (Slot slot : slots) {
             if (slot.isActive()) {
                 displayedSlots.add(slot);
@@ -85,7 +92,7 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
 
         bt_add_slot.setOnClickListener(this);
 
-        slotAdaptater = new SlotAdaptater(displayedSlots, vials, this);
+        slotAdaptater = new SlotAdaptater(displayedSlots, displayedVials, this);
         rv_card_slot.setLayoutManager(new LinearLayoutManager(this));
         rv_card_slot.setAdapter(slotAdaptater);
     }

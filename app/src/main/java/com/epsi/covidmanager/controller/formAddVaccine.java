@@ -68,7 +68,6 @@ public class formAddVaccine extends AppCompatActivity implements View.OnClickLis
             }
             else{
                 onAdd();
-                onReturn();
             }
         }else{
             onReturn();
@@ -99,19 +98,11 @@ public class formAddVaccine extends AppCompatActivity implements View.OnClickLis
         Log.w("TAGI", vialsBis.toString());
 
         for(Vial vial : vialsBis){
-           try {
-               boolean bool =  Vial.insert(vial, this);
-               if(bool){
+               Vial.insert(vial, (el) -> {
                    Toast.makeText(this, "Ca marche", Toast.LENGTH_SHORT).show();
-               }
-               else{
-                   Toast.makeText(this, "Ca marche pas", Toast.LENGTH_SHORT).show();
-               }
-               vials.add(vial);
-           }
-           catch (Exception e){
-               Toast.makeText(this, "L'insertion de données a échoué", Toast.LENGTH_SHORT).show();
-           }
+                   vials.add(vial);
+                   onReturn();
+               });
         }
 
     }

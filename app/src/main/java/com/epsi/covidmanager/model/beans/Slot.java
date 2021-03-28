@@ -159,24 +159,46 @@ public class Slot implements Serializable {
         });
     }
 
-    public void updateStartTime(Date newValue) {
+    public void updateStartTime(Date newValue, SaveCallback callback) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Slot");
-        try {
-            this.startTime = newValue;
-            query.get(this._id).put("startTime", this.startTime);
-        } catch (ParseException e) {
-            Log.d("Slot", "Update startTime problem");
-        }
+
+        // Retrieve the object by id
+        query.getInBackground(this._id, (object, e) -> {
+            if (e == null) {
+                //Object was successfully retrieved
+                // Update the fields we want to
+                this.startTime = newValue;
+                object.put("startTime", this.getStartTime());
+
+                //All other fields will remain the same
+                object.saveInBackground(callback);
+
+            } else {
+                // something went wrong
+                Log.d("ERRORUPDATE", e.getMessage());
+            }
+        });
     }
 
-    public void updateEndTime(Date newValue) {
+    public void updateEndTime(Date newValue, SaveCallback callback) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Slot");
-        try {
-            this.endTime = newValue;
-            query.get(this._id).put("endTime", this.endTime);
-        } catch (ParseException e) {
-            Log.d("Slot", "Update endTime problem");
-        }
+
+        // Retrieve the object by id
+        query.getInBackground(this._id, (object, e) -> {
+            if (e == null) {
+                //Object was successfully retrieved
+                // Update the fields we want to
+                this.endTime = newValue;
+                object.put("endTime", this.getEndTime());
+
+                //All other fields will remain the same
+                object.saveInBackground(callback);
+
+            } else {
+                // something went wrong
+                Log.d("ERRORUPDATE", e.getMessage());
+            }
+        });
     }
 
     public void updateNbReservedPlaces(int newValue, SaveCallback callback) {
@@ -200,7 +222,7 @@ public class Slot implements Serializable {
         });
     }
 
-    public static boolean insert(Slot slot, Context toastContext) {
+    public static void insert(Slot slot, Context toastContext, SaveCallback callback) {
         ParseObject entity = new ParseObject("Slot");
 
         entity.put("startTime", slot.getStartTime());
@@ -208,15 +230,6 @@ public class Slot implements Serializable {
         entity.put("nbReservedPlaces", slot.getNbReservedPlaces());
         entity.put("nbInitialPlaces", slot.getNbInitialPlaces());
         entity.put("isActive", slot.isActive());
-
-        // Saves the new object.
-        // Notice that the SaveCallback is totally optional!
-        try {
-            entity.save();
-            return true;
-        } catch (ParseException e) {
-            Toast.makeText(toastContext, e.getMessage(), Toast.LENGTH_SHORT).show();
-            return false;
-        }
+        entity.saveInBackground(callback);
     }
 }

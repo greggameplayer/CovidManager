@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -71,6 +72,8 @@ public class Vial implements Serializable {
                         for(Slot slot : slots) {
                             if (slot.getId().equals(result.getString("slotId"))) {
                                 vials.add(new Vial(result.getObjectId(), result.getInt("shotNumber"), vaccine, slot));
+                            } else {
+                                vials.add(new Vial(result.getObjectId(), result.getInt("shotNumber"), vaccine));
                             }
                         }
                     }
@@ -83,56 +86,62 @@ public class Vial implements Serializable {
         return null;
     }
 
-    public void updateShotNumber(int newValue) {
+    public void updateShotNumber(int newValue, SaveCallback callback) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Vial");
-        try {
-            this.shotNumber = newValue;
-            query.get(this.id).put("shotNumber", this.shotNumber);
-        } catch (ParseException e) {
-            Log.d("Slot", "Update shotNumber problem");
-        }
+
+        // Retrieve the object by id
+        query.getInBackground(this.id, (object, e) -> {
+            if (e == null) {
+                //Object was successfully retrieved
+                // Update the fields we want to
+                this.shotNumber = newValue;
+                object.put("shotNumber", this.getShotNumber());
+
+                //All other fields will remain the same
+                object.saveInBackground(callback);
+
+            } else {
+                // something went wrong
+                Log.d("ERRORUPDATE", e.getMessage());
+            }
+        });
     }
 
-    public void updateSlot(Slot newValue) {
+    public void updateSlot(Slot newValue, SaveCallback callback) {
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Vial");
-        try {
-            this.slot = newValue;
-            query.get(this.id).put("slotId", this.getSlot().getId());
-        } catch (ParseException e) {
-            Log.d("Slot", "Update slot problem");
-        }
+
+        // Retrieve the object by id
+        query.getInBackground(this.id, (object, e) -> {
+            if (e == null) {
+                //Object was successfully retrieved
+                // Update the fields we want to
+                this.slot = newValue;
+                object.put("slotId", this.getSlot().getId());
+
+                //All other fields will remain the same
+                object.saveInBackground(callback);
+
+            } else {
+                // something went wrong
+                Log.d("ERRORUPDATE", e.getMessage());
+            }
+        });
     }
 
-    public static boolean insert(Vial vial, Slot slot, Context toastContext) {
+    public static void insert(Vial vial, Slot slot, SaveCallback callback) {
         ParseObject entity = new ParseObject("Vial");
 
         entity.put("shotNumber", vial.getShotNumber());
         entity.put("vaccineId", vial.getVaccine().getId());
         entity.put("slotId", vial.getSlot().getId());
-        // Saves the new object.
-        // Notice that the SaveCallback is totally optional!
-        try {
-            entity.save();
-            return true;
-        } catch (ParseException e) {
-            Toast.makeText(toastContext, e.getMessage(), Toast.LENGTH_SHORT).show();
-            return false;
-        }
+        entity.saveInBackground(callback);
     }
 
-    public static boolean insert(Vial vial, Context toastContext) {
+    public static void insert(Vial vial, SaveCallback callback) {
         ParseObject entity = new ParseObject("Vial");
 
         entity.put("shotNumber", vial.getShotNumber());
         entity.put("vaccineId", vial.getVaccine().getId());
-        // Saves the new object.
-        // Notice that the SaveCallback is totally optional!
-        try {
-            entity.save();
-            return true;
-        } catch (ParseException e) {
-            Toast.makeText(toastContext, e.getMessage(), Toast.LENGTH_SHORT).show();
-            return false;
-        }
+        entity.saveInBackground(callback);
     }
 }
