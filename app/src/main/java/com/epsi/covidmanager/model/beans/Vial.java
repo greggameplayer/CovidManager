@@ -119,4 +119,20 @@ public class Vial implements Serializable {
             return false;
         }
     }
+
+    public static boolean insert(Vial vial, Context toastContext) {
+        ParseObject entity = new ParseObject("Vial");
+
+        entity.put("shotNumber", vial.getShotNumber());
+        entity.put("vaccineId", vial.getVaccine().getId());
+        // Saves the new object.
+        // Notice that the SaveCallback is totally optional!
+        try {
+            entity.save();
+            return true;
+        } catch (ParseException e) {
+            Toast.makeText(toastContext, e.getMessage(), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+    }
 }
