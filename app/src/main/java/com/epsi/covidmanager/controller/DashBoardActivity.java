@@ -49,6 +49,7 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
     private ArrayList<Slot> slots;
     private ArrayList<Vial> vials;
     private ArrayList<Vaccine> vaccines;
+    private ArrayList<String> IDdisplayedSlots = new ArrayList<>();
     private ArrayList<Slot> displayedSlots = new ArrayList<>();
     private ArrayList<Vial> displayedVials = new ArrayList<>();
     //Outil
@@ -87,17 +88,24 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
         for (Vial vial : vials) {
             if (vial.getSlot() != null) {
                 displayedVials.add(vial);
+                for (Slot slot : slots) {
+                    if (vial.getSlot().getId().equals(slot.getId())) {
+                        IDdisplayedSlots.add(vial.getSlot().getId());
+                        break;
+                    }
+                }
             }
         }
 
-        for (Vial vial: displayedVials) {
-            for (Slot slot : slots) {
-                if (vial.getSlot().getId().equals(slot.getId()) && !displayedSlots.contains(slot)) {
-                    displayedSlots.add(vial.getSlot());
+        for (Slot slot : slots){
+            for (String IDslot: IDdisplayedSlots) {
+                if(IDslot.equals(slot.getId())){
+                    displayedSlots.add(slot);
                     break;
                 }
             }
         }
+
 
         Logger.addLogAdapter(new AndroidLogAdapter());
         Log.d("vaccines", vaccines.toString());
