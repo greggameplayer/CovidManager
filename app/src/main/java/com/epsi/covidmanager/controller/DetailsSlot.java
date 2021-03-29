@@ -1,7 +1,6 @@
 package com.epsi.covidmanager.controller;
 
 
-import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -23,7 +22,6 @@ import com.epsi.covidmanager.model.beans.Vaccine;
 import com.epsi.covidmanager.model.beans.Vial;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class DetailsSlot extends AppCompatActivity implements View.OnClickListener {
 
@@ -153,7 +151,13 @@ public class DetailsSlot extends AppCompatActivity implements View.OnClickListen
             }
         }
         else if (v == bt_modifier){
-            Toast.makeText(this, "Accès à la page de modification", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, formAddAndModifySlot.class);
+            intent.putExtra("slot", slot);
+            intent.putExtra("vaccines", vaccines);
+            intent.putExtra("slots", slots);
+            intent.putExtra("vials", vials);
+
+            startActivity(intent);
         }
         else if (v == bt_supprimer) {
             AlertDialog alertDialog = new AlertDialog.Builder(DetailsSlot.this).create();

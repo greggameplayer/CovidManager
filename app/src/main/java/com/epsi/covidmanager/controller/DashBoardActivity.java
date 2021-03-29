@@ -1,12 +1,10 @@
 package com.epsi.covidmanager.controller;
 
 import android.annotation.SuppressLint;
-import android.content.ClipData;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -18,7 +16,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -151,9 +148,11 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
 
     @Override
     public void onClick(View v) {
-        Intent intent = new Intent(this, DashBoardVaccin.class);
-        String str = "addSlot";
-        intent.putExtra("slot", str);
+        Intent intent = new Intent(this, formAddAndModifySlot.class);
+        intent.putExtra("vaccines", vaccines);
+        intent.putExtra("slots", slots);
+        intent.putExtra("vials", vials);
+
         startActivity(intent);
     }
 
