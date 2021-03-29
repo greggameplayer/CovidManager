@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -12,7 +13,9 @@ import com.parse.SaveCallback;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Vial implements Serializable {
     private final String id;
@@ -57,35 +60,18 @@ public class Vial implements Serializable {
         return slot;
     }
 
-    public static ArrayList<Vial> findAll(Context toastContext, ArrayList<Vaccine> vaccines, ArrayList<Slot> slots) {
+    public static void findAll(ArrayList<Vaccine> vaccines, ArrayList<Slot> slots, AtomicReference<List<ParseObject>> newVials) {
 
         // Creates a new ParseQuery object to help us fetch MyCustomClass objects
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Vial");
-
-        // Fetches data synchronously
-        try {
-            ArrayList<Vial> vials = new ArrayList<>();
-            List<ParseObject> results = query.find();
-
-            for(ParseObject result : results) {
-                for(Vaccine vaccine : vaccines) {
-                    if (vaccine.getId().equals(result.getString("vaccineId"))) {
-                        for(Slot slot : slots) {
-                            if (slot.getId().equals(result.getString("slotId"))) {
-                                vials.add(new Vial(result.getObjectId(), result.getInt("shotNumber"), vaccine, slot));
-                            } else {
-                                vials.add(new Vial(result.getObjectId(), result.getInt("shotNumber"), vaccine));
-                            }
-                            break;
-                        }
-                    }
-                }
+        final FindCallback<ParseObject> lambda = (objects, e) -> {
+            if (e == null) {
+                newVials.set(objects);
+            } else {
+                Log.e("ERROR", e.getMessage());
             }
-            return vials;
-        } catch (ParseException | IndexOutOfBoundsException e) {
-            Toast.makeText(toastContext, "There are no vials", Toast.LENGTH_SHORT).show();
-        }
-        return null;
+        };
+        query.findInBackground(lambda);
     }
 
     public void updateShotNumber(int newValue, SaveCallback callback) {
@@ -130,6 +116,20 @@ public class Vial implements Serializable {
         });
     }
 
+    public void removeSlot(SaveCallback callback) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Vial");
+
+        query.getInBackground(this.id, (object, e) -> {
+           if (e == null) {
+               this.slot = null;
+               object.remove("slotId");
+               object.saveInBackground(callback);
+           } else {
+               Log.d("ERRORREMOVE", e.getMessage());
+           }
+        });
+    }
+
     public static void insert(Vial vial, Slot slot, SaveCallback callback) {
         ParseObject entity = new ParseObject("Vial");
 
@@ -149,7 +149,8 @@ public class Vial implements Serializable {
 
     public static void insert(ArrayList<Vial> vials) {
         for (Vial vial : vials) {
-            Vial.insert(vial, (el) -> {});
+            Vial.insert(vial, (el) -> {
+            });
         }
     }
 }

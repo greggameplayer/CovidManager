@@ -82,12 +82,7 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
         for (Vial vial : vials) {
             if (vial.getSlot() != null) {
                 displayedVials.add(vial);
-            }
-        }
-
-        for (Slot slot : slots) {
-            if (slot.isActive()) {
-                displayedSlots.add(slot);
+                displayedSlots.add(vial.getSlot());
             }
         }
 

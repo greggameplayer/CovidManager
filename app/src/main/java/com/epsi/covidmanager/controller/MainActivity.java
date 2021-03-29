@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -20,9 +21,17 @@ import com.epsi.covidmanager.model.beans.Vaccine;
 import com.epsi.covidmanager.model.beans.Vial;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
+import com.parse.FindCallback;
 import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     Button btConnection;
@@ -31,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<Slot> slots = new ArrayList<>();
     private ArrayList<Vial> vials = new ArrayList<>();
     private ArrayList<Vaccine> vaccines = new ArrayList<>();
+    private final Object lockObject = new Object();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,30 +63,86 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.bt_connection) {
-            if (etLogin.getText().toString().isEmpty()) {
-                Toast.makeText(MainActivity.this, "The email field shouldn't be empty", Toast.LENGTH_SHORT).show();
-            } else if (etPassword.getText().toString().isEmpty()) {
-                Toast.makeText(MainActivity.this, "The password field shouldn't be empty", Toast.LENGTH_SHORT).show();
-            } else {
-                Secretary secretary = Secretary.login(etLogin.getText().toString(), etPassword.getText().toString(), this);
-                if (secretary != null) {
-                    vaccines = Vaccine.findAll(this);
-                    if (vaccines != null) {
-                        slots = Slot.findAll(this, vials);
-                        if (slots != null) {
-                            vials = Vial.findAll(this, vaccines, slots);
+        Context that = this;
+        AtomicReference<List<ParseObject>> futureVials = new AtomicReference<>();
+        AtomicInteger numberResults = new AtomicInteger(0);
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                    ParseQuery<ParseObject> query = ParseQuery.getQuery("Vial");
+                    query.setLimit(1000);
+                    query.findInBackground((objects, e) -> {
+                        synchronized (lockObject) {
+                            if (e == null) {
+                                futureVials.set(objects);
+                                try {
+                                    numberResults.set(query.count());
+                                } catch (ParseException parseException) {
+                                    parseException.printStackTrace();
+                                }
+                                lockObject.notify();
+                            } else {
+                                Log.e("ERROR", e.getMessage());
+                            }
+                        }
+                    });
+            }
+        };
+        Thread mainThread = new Thread() {
+            @Override
+            public void run() {
+                synchronized (lockObject) {
+                    if (v.getId() == R.id.bt_connection) {
+                        if (etLogin.getText().toString().isEmpty()) {
+                            Toast.makeText(MainActivity.this, "The email field shouldn't be empty", Toast.LENGTH_SHORT).show();
+                        } else if (etPassword.getText().toString().isEmpty()) {
+                            Toast.makeText(MainActivity.this, "The password field shouldn't be empty", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Secretary secretary = Secretary.login(etLogin.getText().toString(), etPassword.getText().toString(), that);
+                            if (secretary != null) {
+                                vaccines = Vaccine.findAll(that);
+                                if (vaccines != null) {
+                                    slots = Slot.findAll(that, vials);
+                                    if (slots != null) {
+                                        thread.start();
+                                        while(futureVials.get() == null || futureVials.get().size() != numberResults.get()) {
+                                            try {
+                                                lockObject.wait();
+                                            } catch (InterruptedException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                        Log.d("VIALS", Integer.toString(futureVials.get().size()));
+                                        for (ParseObject result : futureVials.get()) {
+                                            for (Vaccine vaccine : vaccines) {
+                                                if (vaccine.getId().equals(result.getString("vaccineId"))) {
+                                                    for (Slot slot : slots) {
+                                                        if (result.getString("slotId") == null) {
+                                                            vials.add(new Vial(result.getObjectId(), result.getInt("shotNumber"), vaccine));
+                                                            break;
+                                                        } else if (slot.getId().equals(result.getString("slotId"))) {
+                                                            vials.add(new Vial(result.getObjectId(), result.getInt("shotNumber"), vaccine, slot));
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                Intent intent = new Intent(that, DashBoardActivity.class);
+                                intent.putExtra("secretary", secretary);
+                                intent.putExtra("vaccines", vaccines);
+                                intent.putExtra("slots", slots);
+                                intent.putExtra("vials", vials);
+                                startActivity(intent);
+                            }
                         }
                     }
-                    Intent intent = new Intent(this, DashBoardActivity.class);
-                    intent.putExtra("secretary", secretary);
-                    intent.putExtra("vaccines", vaccines);
-                    intent.putExtra("slots", slots);
-                    intent.putExtra("vials", vials);
-                    startActivity(intent);
                 }
             }
-        }
+        };
+        mainThread.start();
     }
 
     @Override
