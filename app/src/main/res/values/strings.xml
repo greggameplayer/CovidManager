@@ -18,4 +18,5 @@
     <string name="bt_details_vaccine_return">Return</string>
     <string name="drawer_opened">Drawer opened</string>
     <string name="drawer_closed">Drawer closed</string>
+    <string name="wrong_format">Wrong format !</string>
 </resources>
