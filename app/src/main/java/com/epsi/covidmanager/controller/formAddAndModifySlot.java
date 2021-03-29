@@ -14,17 +14,21 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.basgeekball.awesomevalidation.AwesomeValidation;
+import com.basgeekball.awesomevalidation.ValidationStyle;
 import com.epsi.covidmanager.R;
 import com.epsi.covidmanager.model.beans.Slot;
 import com.epsi.covidmanager.model.beans.Vaccine;
 import com.epsi.covidmanager.model.beans.Vial;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-public class formAddAndModifySlot extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener, TextView.OnEditorActionListener{
+public class formAddAndModifySlot extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener{
 
     private Spinner spinnerVaccin;
     private TimePicker timePicker;
@@ -35,6 +39,7 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
     private ArrayList<Slot> slots;
     private ArrayList<Vial> vials;
     private ArrayList<Vaccine> vaccines;
+    private AwesomeValidation heureValidation = new AwesomeValidation(ValidationStyle.UNDERLABEL);
 
     private Slot slot;
 
@@ -67,9 +72,15 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         timePicker.setIs24HourView(true);
 
         heureDebut = findViewById(R.id.heureDebut);
+        heureValidation.setContext(this);
+        heureValidation.setUnderlabelColorByResource(R.color.red);
+        heureValidation.addValidation(this, R.id.heureDebut, "^([1-9]|([012][0-9])|(3[01]))\\/([0]{0,1}[1-9]|1[012])\\/\\d\\d\\d\\d\\s([0-1]?[0-9]|2?[0-3]):([0-5]\\d)$", R.string.wrong_format);
+        heureValidation.addValidation(this, R.id.heureFin, "^([1-9]|([012][0-9])|(3[01]))\\/([0]{0,1}[1-9]|1[012])\\/\\d\\d\\d\\d\\s([0-1]?[0-9]|2?[0-3]):([0-5]\\d)$", R.string.wrong_format);
+
         heureFin = findViewById(R.id.heureFin);
         nbDose = findViewById(R.id.nombreDose);
         bt_valider = findViewById(R.id.bt_valider);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("d/MM/YYYY hh:mm");
 
         slot = (Slot) getIntent().getSerializableExtra("slot");
 
@@ -82,9 +93,9 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
                 }
             }
             spinnerVaccin.setSelection(position, true);
-            heureDebut.setOnEditorActionListener(this);
-            heureFin.setOnEditorActionListener(this);
             nbDose.setText(Integer.toString(slot.getNbInitialPlaces()));
+            heureDebut.setText(dateFormat.format(slot.getStartTime()));
+            heureFin.setText(dateFormat.format(slot.getEndTime()));
         }
 
         bt_valider.setOnClickListener(this);
@@ -94,14 +105,6 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
     @Override
     public void onBackPressed() {
         moveTaskToBack(false);
-    }
-
-   @Override
-    public boolean onEditorAction(TextView exampleView, int actionId, KeyEvent event) {
-        Log.w("test123", "marche");
-         if (actionId == EditorInfo.IME_NULL && event.getAction() == KeyEvent.ACTION_DOWN) {
-            }
-        return true;
     }
 
     @Override
@@ -121,7 +124,11 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
        String heureFinStr = heureFin.getText().toString();
        String nombreDoseStr = nbDose.getText().toString();
        //BDD(heureDebutStr, heureFinStr, nombreDoseStr, vaccin);
+        if (heureValidation.validate()) {
+            Toast.makeText(this, "Good !", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Wrong !", Toast.LENGTH_SHORT).show();
+        }
     }
-
 }
 

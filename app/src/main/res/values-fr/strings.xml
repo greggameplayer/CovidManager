@@ -19,4 +19,5 @@
     <string name="bt_details_vaccine_return">Retour</string>
     <string name="drawer_opened">Tiroir ouvert</string>
     <string name="drawer_closed">Tiroir fermé</string>
+    <string name="wrong_format">Mauvais format !</string>
 </resources>
