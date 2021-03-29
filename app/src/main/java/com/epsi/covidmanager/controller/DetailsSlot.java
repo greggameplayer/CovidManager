@@ -164,13 +164,17 @@ public class DetailsSlot extends AppCompatActivity implements View.OnClickListen
                         public void onClick(DialogInterface dialog, int which) {
                             for (Slot slot1 : slots) {
                                 if (slot1.getId().equals(slot.getId())) {
-                                    slot1.delete((el) -> {
-                                        Intent DashBoardActivity = new Intent(context, DashBoardActivity.class);
-                                        DashBoardActivity.putExtra("vaccines", vaccines);
-                                        DashBoardActivity.putExtra("slots", slots);
-                                        DashBoardActivity.putExtra("vials", vials);
-                                        startActivity(DashBoardActivity);
-                                    });
+                                    for (Vial vial: vials) {
+                                        if (vial.getSlot() != null && vial.getSlot().getId().equals(slot1.getId())) {
+                                            slot1.delete(vial, (el) -> {
+                                                Intent DashBoardActivity = new Intent(context, DashBoardActivity.class);
+                                                DashBoardActivity.putExtra("vaccines", vaccines);
+                                                DashBoardActivity.putExtra("slots", slots);
+                                                DashBoardActivity.putExtra("vials", vials);
+                                                startActivity(DashBoardActivity);
+                                            });
+                                        }
+                                    }
                                     break;
                                 }
                             }

@@ -28,24 +28,21 @@ public class Slot implements Serializable {
     private final String _id;
     private Date startTime;
     private Date endTime;
-    private boolean isActive;
     private int nbReservedPlaces;
     private int nbInitialPlaces;
 
-    public Slot(String _id, Date startTime, Date endTime, Boolean isActive, int nbReservedPlaces, int nbInitialPlaces) {
+    public Slot(String _id, Date startTime, Date endTime, int nbReservedPlaces, int nbInitialPlaces) {
         this.startTime = startTime;
         this.nbInitialPlaces = nbInitialPlaces;
         this.endTime = endTime;
-        this.isActive = isActive;
         this.nbReservedPlaces = nbReservedPlaces;
         this._id = _id;
         Logger.addLogAdapter(new AndroidLogAdapter());
     }
 
-    public Slot(Date startTime, Date endTime, Boolean isActive, int nbReservedPlaces, int nbInitialPlaces) {
+    public Slot(Date startTime, Date endTime, int nbReservedPlaces, int nbInitialPlaces) {
         this.startTime = startTime;
         this.endTime = endTime;
-        this.isActive = isActive;
         this.nbInitialPlaces = nbInitialPlaces;
         this.nbReservedPlaces = nbReservedPlaces;
         this._id = null;
@@ -103,10 +100,6 @@ public class Slot implements Serializable {
         return nbReservedPlaces;
     }
 
-    public boolean isActive() {
-        return isActive;
-    }
-
     public String getDates(){
         SimpleDateFormat formaterFull = new SimpleDateFormat("d/MM/yyyy hh:mm");
         SimpleDateFormat formaterDMY = new SimpleDateFormat("d/MM/yyyy");
@@ -129,7 +122,7 @@ public class Slot implements Serializable {
             List<ParseObject> results = query.find();
 
             for (ParseObject result : results) {
-                slots.add(new Slot(result.getObjectId(), result.getDate("startTime"), result.getDate("endTime"), result.getBoolean("isActive"), result.getInt("nbReservedPlaces"), result.getInt("nbInitialPlaces")));
+                slots.add(new Slot(result.getObjectId(), result.getDate("startTime"), result.getDate("endTime"), result.getInt("nbReservedPlaces"), result.getInt("nbInitialPlaces")));
             }
             return slots;
         } catch (ParseException | IndexOutOfBoundsException e) {
@@ -138,25 +131,8 @@ public class Slot implements Serializable {
         return null;
     }
 
-    public void delete(SaveCallback callback) {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Slot");
-
-        // Retrieve the object by id
-        query.getInBackground(this._id, (object, e) -> {
-            if (e == null) {
-                //Object was successfully retrieved
-                // Update the fields we want to
-                this.isActive = false;
-                object.put("isActive", this.isActive());
-
-                //All other fields will remain the same
-                object.saveInBackground(callback);
-
-            } else {
-                // something went wrong
-                Log.d("ERRORUPDATE", e.getMessage());
-            }
-        });
+    public void delete(Vial vial, SaveCallback callback) {
+        vial.removeSlot(callback);
     }
 
     public void updateStartTime(Date newValue, SaveCallback callback) {
@@ -229,7 +205,6 @@ public class Slot implements Serializable {
         entity.put("endTime", slot.getEndTime());
         entity.put("nbReservedPlaces", slot.getNbReservedPlaces());
         entity.put("nbInitialPlaces", slot.getNbInitialPlaces());
-        entity.put("isActive", slot.isActive());
         entity.saveInBackground(callback);
     }
 }
