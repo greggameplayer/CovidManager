@@ -31,8 +31,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class formAddAndModifySlot extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener{
+public class formAddAndModifySlot extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener {
 
     private Spinner spinnerVaccin;
     private EditText heureDebut, heureFin, nbDose;
@@ -43,6 +44,7 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
     private ArrayList<Vaccine> vaccines;
     private AwesomeValidation heureValidation = new AwesomeValidation(ValidationStyle.UNDERLABEL);
     private SimpleDateFormat dateFormat;
+    private final Object lockObject = new Object();
 
     private Slot slot;
 
@@ -58,9 +60,9 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
 
         ArrayList<String> tabNameVaccines = new ArrayList<>();
 
-        for (Vaccine vaccine : vaccines){
-            for(Vial vial : vials){
-                if (vial.getVaccine().getName().equals(vaccine.getName())){
+        for (Vaccine vaccine : vaccines) {
+            for (Vial vial : vials) {
+                if (vial.getVaccine().getName().equals(vaccine.getName())) {
                     tabNameVaccines.add(vaccine.getName());
                     break;
                 }
@@ -89,9 +91,9 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         slot = (Slot) getIntent().getSerializableExtra("slot");
 
         int position = 0;
-        if (slot!=null) {
-            for (Vial vial : vials){
-                if(vial.getSlot().getId().equals(slot.getId())){
+        if (slot != null) {
+            for (Vial vial : vials) {
+                if (vial.getSlot().getId().equals(slot.getId())) {
                     position = adapter.getPosition(vial.getVaccine().getName());
                     break;
                 }
@@ -142,36 +144,52 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
             }
 
 
-            for(Vial vial : vials){
+            for (Vial vial : vials) {
+                if (vial.getSlot() != null) {
+                    if (vial.getVaccine().getName().equals(vaccinStr)) {
+                        totalDoses += vial.getShotNumber();
+                        if (nombreDoseStr <= 0 || nombreDoseStr > totalDoses) {
+                            Toast.makeText(this, "Le nombre de doses entrées est supérieur au stock actuel (" + totalDoses + ")", Toast.LENGTH_LONG).show();
+                            isPossible = false;
+                            break;
+                        }
+                    }
 
-                if(vial.getVaccine().getName().equals(vaccinStr)){
-                    totalDoses += vial.getShotNumber();
-                    if(nombreDoseStr <= 0 || nombreDoseStr > totalDoses){
-                        Toast.makeText(this, "Le nombre de doses entrées est supérieur au stock actuel (" + totalDoses + ")", Toast.LENGTH_LONG).show();
+                    if ((vial.getSlot().getStartTime().after(heureDebutStr) && vial.getSlot().getEndTime().before(heureDebutStr)) || (vial.getSlot().getStartTime().after(heureFinStr) && vial.getSlot().getEndTime().before(heureFinStr))) {
+                        Toast.makeText(this, "Les différents créneaux ne peuvent pas se superposer ( créneaux existant concerné :" + vial.getSlot().getStartTime() + " - " + vial.getSlot().getEndTime() + ")", Toast.LENGTH_LONG).show();
                         isPossible = false;
                         break;
                     }
                 }
-
-                if((vial.getSlot().getStartTime().after(heureDebutStr) && vial.getSlot().getEndTime().before(heureDebutStr)) || (vial.getSlot().getStartTime().after(heureFinStr) && vial.getSlot().getEndTime().before(heureFinStr))){
-                    Toast.makeText(this, "Les différents créneaux ne peuvent pas se superposer ( créneaux existant concerné :" + vial.getSlot().getStartTime() + " - " + vial.getSlot().getEndTime() + ")", Toast.LENGTH_LONG).show();
-                    isPossible = false;
-                    break;
-                    }
-                }
-            if (isPossible){
-                    if (slot!= null){
-                        for(Slot slot1: slots){
-                            if (slot1.getId().equals(slot.getId())){
-                                slot1.updateAll(heureDebutStr, heureFinStr, nombreDoseStr, (e) ->{
-                                    //TODO: update vials
-                                });
-                                break;
+            }
+            if (isPossible) {
+                if (slot != null) {
+                    for (Slot slot1 : slots) {
+                        if (slot1.getId().equals(slot.getId())) {
+                            for (Vial vial : vials) {
+                                if (vial.getVaccine().getId().equals(vaccinStr) && vial.getSlot().equals(slot1)) {
+                                    slot1.updateAll(heureDebutStr, heureFinStr, nombreDoseStr, (e) -> {
+                                        synchronized (lockObject) {
+                                            AtomicInteger nb = new AtomicInteger();
+                                            Vial.removeSlot(vials, vial.getVaccine().getId(), lockObject, nb);
+                                            while (nb.get() == vials.size()) {
+                                                try {
+                                                    lockObject.wait();
+                                                } catch (InterruptedException interruptedException) {
+                                                    interruptedException.printStackTrace();
+                                                }
+                                            }
+                                        }
+                                        //TODO: update vials
+                                    });
+                                }
                             }
+                            break;
                         }
-                    } else {
-
                     }
+                } else {
+
+                }
 
             }
         } else {
@@ -180,7 +198,7 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
     }
 
 
-    private void onReturn(){
+    private void onReturn() {
         Intent intent = new Intent(this, DashBoardActivity.class);
         intent.putExtra("vaccines", vaccines);
         intent.putExtra("slots", slots);

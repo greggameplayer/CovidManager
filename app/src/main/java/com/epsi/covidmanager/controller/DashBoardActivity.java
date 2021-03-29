@@ -30,7 +30,12 @@ import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class DashBoardActivity extends AppCompatActivity implements SlotAdaptater.OnSlotListener, View.OnClickListener {
     //Composoants graphiques
@@ -82,7 +87,15 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
         for (Vial vial : vials) {
             if (vial.getSlot() != null) {
                 displayedVials.add(vial);
-                displayedSlots.add(vial.getSlot());
+            }
+        }
+
+        for (Vial vial: displayedVials) {
+            for (Slot slot : slots) {
+                if (vial.getSlot().getId().equals(slot.getId()) && !displayedSlots.contains(slot)) {
+                    displayedSlots.add(vial.getSlot());
+                    break;
+                }
             }
         }
 

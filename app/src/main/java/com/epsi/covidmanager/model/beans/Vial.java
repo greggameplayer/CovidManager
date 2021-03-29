@@ -130,6 +130,22 @@ public class Vial implements Serializable {
         });
     }
 
+    public void removeSlot(String vaccineId, SaveCallback callback) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Vial");
+
+        query.whereEqualTo("vaccineId", vaccineId);
+
+        query.getInBackground(this.id, (object, e) -> {
+            if (e == null) {
+                this.slot = null;
+                object.remove("slotId");
+                object.saveInBackground(callback);
+            } else {
+                Log.d("ERRORREMOVE", e.getMessage());
+            }
+        });
+    }
+
     public static void insert(Vial vial, Slot slot, SaveCallback callback) {
         ParseObject entity = new ParseObject("Vial");
 
@@ -152,5 +168,21 @@ public class Vial implements Serializable {
             Vial.insert(vial, (el) -> {
             });
         }
+    }
+
+    public static Thread removeSlot(ArrayList<Vial> vials, String vaccineId, Object lockObject, AtomicInteger nb) {
+        return new Thread(){
+            @Override
+            public void run() {
+                synchronized (lockObject) {
+                    for (Vial vial : vials) {
+                        vial.removeSlot(vaccineId, e -> {
+                            nb.getAndIncrement();
+                        });
+                    }
+                    lockObject.notify();
+                }
+            }
+        };
     }
 }
