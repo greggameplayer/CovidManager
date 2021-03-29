@@ -1,6 +1,7 @@
 package com.epsi.covidmanager.controller;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -25,14 +26,15 @@ import com.epsi.covidmanager.model.beans.Slot;
 import com.epsi.covidmanager.model.beans.Vaccine;
 import com.epsi.covidmanager.model.beans.Vial;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Objects;
 
 public class formAddAndModifySlot extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener{
 
     private Spinner spinnerVaccin;
-    private TimePicker timePicker;
-    private DatePicker datePicker;
     private EditText heureDebut, heureFin, nbDose;
     private Button bt_valider;
     private String vaccin;
@@ -40,6 +42,7 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
     private ArrayList<Vial> vials;
     private ArrayList<Vaccine> vaccines;
     private AwesomeValidation heureValidation = new AwesomeValidation(ValidationStyle.UNDERLABEL);
+    private SimpleDateFormat dateFormat;
 
     private Slot slot;
 
@@ -56,7 +59,12 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         ArrayList<String> tabNameVaccines = new ArrayList<>();
 
         for (Vaccine vaccine : vaccines){
-            tabNameVaccines.add(vaccine.getName());
+            for(Vial vial : vials){
+                if (vial.getVaccine().getName().equals(vaccine.getName())){
+                    tabNameVaccines.add(vaccine.getName());
+                    break;
+                }
+            }
         }
 
         spinnerVaccin = (Spinner) findViewById(R.id.spinnerVaccin);
@@ -67,10 +75,6 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         spinnerVaccin.setAdapter(adapter);
         spinnerVaccin.setOnItemSelectedListener(this);
 
-        timePicker = findViewById(R.id.timePicker);
-        datePicker = findViewById(R.id.datePicker);
-        timePicker.setIs24HourView(true);
-
         heureDebut = findViewById(R.id.heureDebut);
         heureValidation.setContext(this);
         heureValidation.setUnderlabelColorByResource(R.color.red);
@@ -80,7 +84,7 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         heureFin = findViewById(R.id.heureFin);
         nbDose = findViewById(R.id.nombreDose);
         bt_valider = findViewById(R.id.bt_valider);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("d/MM/YYYY hh:mm");
+        dateFormat = new SimpleDateFormat("d/MM/YYYY hh:mm");
 
         slot = (Slot) getIntent().getSerializableExtra("slot");
 
@@ -120,15 +124,69 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
 
     @Override
     public void onClick(View v) {
-       String heureDebutStr = heureDebut.getText().toString();
-       String heureFinStr = heureFin.getText().toString();
-       String nombreDoseStr = nbDose.getText().toString();
-       //BDD(heureDebutStr, heureFinStr, nombreDoseStr, vaccin);
+
         if (heureValidation.validate()) {
-            Toast.makeText(this, "Good !", Toast.LENGTH_SHORT).show();
+            boolean isPossible = true;
+            int totalDoses = 0;
+
+            String vaccinStr = vaccin;
+            int nombreDoseStr = Integer.parseInt(nbDose.getText().toString());
+            Date heureDebutStr = null;
+            Date heureFinStr = null;
+
+            try {
+                heureDebutStr = dateFormat.parse(String.valueOf(heureDebut.getText()));
+                heureFinStr = dateFormat.parse(String.valueOf(heureFin.getText()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+
+            for(Vial vial : vials){
+
+                if(vial.getVaccine().getName().equals(vaccinStr)){
+                    totalDoses += vial.getShotNumber();
+                    if(nombreDoseStr <= 0 || nombreDoseStr > totalDoses){
+                        Toast.makeText(this, "Le nombre de doses entrées est supérieur au stock actuel (" + totalDoses + ")", Toast.LENGTH_LONG).show();
+                        isPossible = false;
+                        break;
+                    }
+                }
+
+                if((vial.getSlot().getStartTime().after(heureDebutStr) && vial.getSlot().getEndTime().before(heureDebutStr)) || (vial.getSlot().getStartTime().after(heureFinStr) && vial.getSlot().getEndTime().before(heureFinStr))){
+                    Toast.makeText(this, "Les différents créneaux ne peuvent pas se superposer ( créneaux existant concerné :" + vial.getSlot().getStartTime() + " - " + vial.getSlot().getEndTime() + ")", Toast.LENGTH_LONG).show();
+                    isPossible = false;
+                    break;
+                    }
+                }
+            if (isPossible){
+                    if (slot!= null){
+                        for(Slot slot1: slots){
+                            if (slot1.getId().equals(slot.getId())){
+                                slot1.updateAll(heureDebutStr, heureFinStr, nombreDoseStr, (e) ->{
+                                    //TODO: update vials
+                                });
+                                break;
+                            }
+                        }
+                    } else {
+
+                    }
+
+            }
         } else {
             Toast.makeText(this, "Wrong !", Toast.LENGTH_SHORT).show();
         }
     }
+
+
+    private void onReturn(){
+        Intent intent = new Intent(this, DashBoardActivity.class);
+        intent.putExtra("vaccines", vaccines);
+        intent.putExtra("slots", slots);
+        intent.putExtra("vials", vials);
+        startActivity(intent);
+    }
+
 }
 
