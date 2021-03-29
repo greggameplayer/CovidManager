@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -69,28 +70,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Thread thread = new Thread() {
             @Override
             public void run() {
-                    ParseQuery<ParseObject> query = ParseQuery.getQuery("Vial");
-                    query.setLimit(1000);
-                    query.findInBackground((objects, e) -> {
-                        synchronized (lockObject) {
-                            if (e == null) {
-                                futureVials.set(objects);
-                                try {
-                                    numberResults.set(query.count());
-                                } catch (ParseException parseException) {
-                                    parseException.printStackTrace();
-                                }
-                                lockObject.notify();
-                            } else {
-                                Log.e("ERROR", e.getMessage());
+                Looper.prepare();
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("Vial");
+                query.setLimit(1000);
+                query.findInBackground((objects, e) -> {
+                    synchronized (lockObject) {
+                        if (e == null) {
+                            futureVials.set(objects);
+                            try {
+                                numberResults.set(query.count());
+                            } catch (ParseException parseException) {
+                                parseException.printStackTrace();
                             }
+                            lockObject.notify();
+                        } else {
+                            Log.e("ERROR", e.getMessage());
                         }
-                    });
+                    }
+                });
+                Looper.loop();
             }
         };
         Thread mainThread = new Thread() {
             @Override
             public void run() {
+                Looper.prepare();
                 synchronized (lockObject) {
                     if (v.getId() == R.id.bt_connection) {
                         if (etLogin.getText().toString().isEmpty()) {
@@ -98,6 +102,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         } else if (etPassword.getText().toString().isEmpty()) {
                             Toast.makeText(MainActivity.this, "The password field shouldn't be empty", Toast.LENGTH_SHORT).show();
                         } else {
+                            Intent loadingScreen = new Intent(that, LoadingScreenActivity.class);
+                            startActivity(loadingScreen);
                             Secretary secretary = Secretary.login(etLogin.getText().toString(), etPassword.getText().toString(), that);
                             if (secretary != null) {
                                 vaccines = Vaccine.findAll(that);
@@ -105,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     slots = Slot.findAll(that, vials);
                                     if (slots != null) {
                                         thread.start();
-                                        while(futureVials.get() == null || futureVials.get().size() != numberResults.get()) {
+                                        while (futureVials.get() == null || futureVials.get().size() != numberResults.get()) {
                                             try {
                                                 lockObject.wait();
                                             } catch (InterruptedException e) {
@@ -136,10 +142,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 intent.putExtra("slots", slots);
                                 intent.putExtra("vials", vials);
                                 startActivity(intent);
+                            } else {
+                                Intent mainActivity = new Intent(that, MainActivity.class);
+                                startActivity(mainActivity);
                             }
                         }
                     }
                 }
+                Looper.loop();
             }
         };
         mainThread.start();
