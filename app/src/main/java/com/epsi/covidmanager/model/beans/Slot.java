@@ -96,6 +96,10 @@ public class Slot implements Serializable {
         this.endTime = endTime;
     }
 
+    public void setNbInitialPlaces(int nbInitialPlaces) {
+        this.nbInitialPlaces = nbInitialPlaces;
+    }
+
     public void setNbReservedPlaces(int nbReservedPlaces) {
         this.nbReservedPlaces = nbReservedPlaces;
     }
@@ -210,7 +214,7 @@ public class Slot implements Serializable {
         });
     }
 
-    public void updateAll(Date dateDebut, Date dateFin, int nbPlaces, SaveCallback callback){
+    public void updateAllWithReserved(Date dateDebut, Date dateFin, int nbPlaces, SaveCallback callback){
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Slot");
 
         // Retrieve the object by id
@@ -224,6 +228,31 @@ public class Slot implements Serializable {
                 object.put("startTime", this.getStartTime());
                 object.put("endTime", this.getEndTime());
                 object.put("nbReservedPlaces", this.getNbReservedPlaces());
+
+                //All other fields will remain the same
+                object.saveInBackground(callback);
+
+            } else {
+                // something went wrong
+                Log.d("ERRORUPDATE", e.getMessage());
+            }
+        });
+    }
+
+    public void updateAllWithInitial(Date dateDebut, Date dateFin, int nbPlaces, SaveCallback callback){
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Slot");
+
+        // Retrieve the object by id
+        query.getInBackground(this._id, (object, e) -> {
+            if (e == null) {
+                //Object was successfully retrieved
+                // Update the fields we want to
+                this.startTime = dateDebut;
+                this.endTime = dateFin;
+                this.nbInitialPlaces = nbPlaces;
+                object.put("startTime", this.getStartTime());
+                object.put("endTime", this.getEndTime());
+                object.put("nbReservedPlaces", this.getNbInitialPlaces());
 
                 //All other fields will remain the same
                 object.saveInBackground(callback);

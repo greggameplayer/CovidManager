@@ -186,7 +186,7 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
         StringBuilder value = new StringBuilder();
         for(Vaccine vaccine : vaccines){
             int nb = quantityRemainToAllow(vaccine);
-            if(nb < 500){
+            if(nb < 200){
                 value.append(vaccine.getName().toUpperCase()).append(" \n");
             }
         }

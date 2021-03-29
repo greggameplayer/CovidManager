@@ -30,9 +30,13 @@ import com.parse.ParseQuery;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
+import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class formAddAndModifySlot extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener {
@@ -59,6 +63,7 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         vaccines = (ArrayList<Vaccine>) getIntent().getSerializableExtra("vaccines");
         slots = (ArrayList<Slot>) getIntent().getSerializableExtra("slots");
         vials = (ArrayList<Vial>) getIntent().getSerializableExtra("vials");
+        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Paris"));
 
         ArrayList<String> tabNameVaccines = new ArrayList<>();
 
@@ -96,7 +101,7 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         int position = 0;
         if (slot != null) {
             for (Vial vial : vials) {
-                if (vial.getSlot().getId().equals(slot.getId())) {
+                if (vial.getSlot() != null && vial.getSlot().getId().equals(slot.getId())) {
                     position = adapter.getPosition(vial.getVaccine().getName());
                     break;
                 }
@@ -108,6 +113,7 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         }
 
         bt_valider.setOnClickListener(this);
+        bt_retour.setOnClickListener(this);
 
     }
 
@@ -132,9 +138,8 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
 
         if (v == bt_valider) {
             if (heureValidation.validate()) {
-                ArrayList<Vial> vialsWhoseNewValue = new ArrayList<>();
                 boolean isPossible = true;
-                int totalDoses = 0;
+                int totalDoses = 0, nbDoses = 0, incrementDoses = 0;
 
                 String vaccinStr = vaccin;
                 int nombreDoseStr = Integer.parseInt(nbDose.getText().toString());
@@ -149,108 +154,92 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
                 }
 
 
+                nbDoses = nombreDoseStr;
                 for (Vial vial : vials) {
-                    if (vial.getSlot() != null) {
-                        if (vial.getVaccine().getName().equals(vaccinStr)) {
-                            totalDoses += vial.getShotNumber();
-                            if (nombreDoseStr <= 0 || nombreDoseStr > totalDoses) {
-                                Toast.makeText(this, "Le nombre de doses entrées est supérieur au stock actuel (" + totalDoses + ")", Toast.LENGTH_LONG).show();
-                                isPossible = false;
-                                break;
-                            }
+                    if (vial.getVaccine().getName().equals(vaccinStr) && vial.getSlot() == null) {
+                        totalDoses += vial.getShotNumber();
+                        if (nbDoses >= vial.getShotNumber()) {
+                            nbDoses -= vial.getShotNumber();
+                            incrementDoses += vial.getShotNumber();
+                            Log.w("test", String.valueOf(incrementDoses));
                         }
+                    }
 
-                        if ((vial.getSlot().getStartTime().after(heureDebutStr) && vial.getSlot().getEndTime().before(heureDebutStr)) || (vial.getSlot().getStartTime().after(heureFinStr) && vial.getSlot().getEndTime().before(heureFinStr))) {
+                    for (Vial vial1 : vials){
+                        if ( vial1.getSlot()!= null && ((vial1.getSlot().getStartTime().after(heureDebutStr) && vial1.getSlot().getEndTime().before(heureDebutStr)) || (vial1.getSlot().getStartTime().after(heureFinStr) && vial1.getSlot().getEndTime().before(heureFinStr)))) {
                             Toast.makeText(this, "Les différents créneaux ne peuvent pas se superposer ( créneaux existant concerné :" + vial.getSlot().getStartTime() + " - " + vial.getSlot().getEndTime() + ")", Toast.LENGTH_LONG).show();
                             isPossible = false;
                             break;
                         }
                     }
                 }
+
+                //TODO: revoir vérif par rapport à l'heure actuelle
+                //if(new Date().after(heureDebutStr) || new Date().after(heureFinStr)){
+                //    Log.w("test", String.valueOf(new Date()));
+                //    Toast.makeText(this, "l'une des dates rentré est avant la date actuelle", Toast.LENGTH_LONG).show();
+                //    isPossible = false;
+                //    break;
+                //}
+                if (heureDebutStr.after(heureFinStr)) {
+                    Toast.makeText(this, "La date de fin ne peut pas être avant la date de début", Toast.LENGTH_LONG).show();
+                    isPossible = false;
+                }
+
+                if (nombreDoseStr > totalDoses) {
+                    Toast.makeText(this, "Le nombre de doses entrées est supérieur au stock actuel (" + totalDoses + ")", Toast.LENGTH_LONG).show();
+                    isPossible = false;
+                }
+                if (nombreDoseStr != incrementDoses) {
+                    Toast.makeText(this, "Un nombre total de " + nombreDoseStr + " doses n'est pas atteignable de façon exacte ( trop plein de :" + Math.abs(incrementDoses - nombreDoseStr) + ")", Toast.LENGTH_LONG).show();
+                    isPossible = false;
+                }
                 if (isPossible) {
                     Log.d("possible", "possible");
                     if (slot != null) {
                         for (Slot slot1 : slots) {
                             if (slot1.getId().equals(slot.getId())) {
+                                slot1.setEndTime(heureFinStr);
+                                slot1.setStartTime(heureDebutStr);
+                                slot1.setNbInitialPlaces(nombreDoseStr);
+                                slot1.updateAllWithInitial(slot1.getStartTime(), slot1.getEndTime(), slot1.getNbInitialPlaces(), ele -> {
+                                });
                                 for (Vial vial : vials) {
-                                    Log.d("vaccin", vaccinStr);
-                                    if (vial.getSlot() != null && vial.getVaccine().getName().equals(vaccinStr) && vial.getSlot().equals(slot1)) { // Slot déjà attribué
-                                        ParseQuery<ParseObject> query = ParseQuery.getQuery("Slot");
-
-                                        // Retrieve the object by id
-
+                                    if (vial.getSlot() != null && vial.getVaccine().getName().equals(vaccinStr) && vial.getSlot().equals(slot1)) {
                                         vial.getSlot().setStartTime(heureDebutStr);
                                         vial.getSlot().setEndTime(heureFinStr);
                                         vial.getSlot().setNbReservedPlaces(nombreDoseStr);
-                                        for (Vial vial2 : vials) {
-                                            vial2.setSlot(null);
-                                            vial2.removeSlot(vial.getVaccine().getId(), ele -> {
-                                            });
-                                        }
-                                        Log.d("good", "done");
-                                        Intent intent = new Intent(this, DashBoardActivity.class);
-                                        intent.putExtra("vaccines", vaccines);
-                                        intent.putExtra("slots", slots);
-                                        intent.putExtra("vials", vials);
-                                        startActivity(intent);
-                                        //update des vials
-                                        //for (Vial vial1 : vials) {
-                                        //    if (vial1.getShotNumber() > totalDoses) {
-                                        //        totalDoses -= vial1.getShotNumber();
-                                        //    }
-                                        //}
-                                        //    if(totalDoses != 0){
-                                        //        Toast.makeText(this, "Un nombre total de " + nombreDoseStr + " n'est pas atteignable de façon exacte ( trop plein de :" + totalDoses + ")", Toast.LENGTH_LONG).show();
-                                        //    }
-                                        //    vialsWhoseNewValue.add(vial1);
-                                        //    else{
-                                        //        //Vial.removeSlot();
-                                        //        ArrayList<Vial> vialsBis = new ArrayList<>();
-                                        //        for ( Vial upVial : vials){
-                                        //            if (slot != null){
-                                        //                vialsBis.add(new Vial(upVial.getId() ,upVial.getShotNumber(), upVial.getVaccine(), slot));
-                                        //            }
-                                        //            else {
-                                        //                vialsBis.add(new Vial(upVial.getId() ,upVial.getShotNumber(), upVial.getVaccine(), slot));
-                                        //            }
-//
-                                        //        }
-                                        //        Vial.insert(vialsBis);
-                                        //        onReturn();
-                                        //    }
-                                        break;
-                                    } else if (vial.getVaccine().getName().equals(vaccinStr)) { // Slot vide
-                                        for (Vial vial2 : vials) {
-                                            if (vial2.getSlot() != null && vial2.getSlot().getId().equals(slot1.getId())) {
-                                                vial2.setSlot(null);
-                                                vial2.removeSlot(vial.getVaccine().getId(), ele -> {
-                                                });
-                                            }
-                                        }
-                                        Log.d("good", "done");
-                                        Intent intent = new Intent(this, DashBoardActivity.class);
-                                        intent.putExtra("vaccines", vaccines);
-                                        intent.putExtra("slots", slots);
-                                        intent.putExtra("vials", vials);
-                                        startActivity(intent);
-                                        break;
+                                        vial.setSlot(slot1);
+                                        vial.updateSlot(slot1, ele -> {
+                                        });
                                     }
                                 }
-                                break;
                             }
                         }
                     } else {
-
+                        Slot newSlot = new Slot(heureFinStr, heureDebutStr, 0, nombreDoseStr);
+                        Slot.insert(newSlot, this, (e) -> {
+                        });
+                        slots.add(newSlot);
+                        for (Vial vial : vials) {
+                            if (vial.getSlot() == null && vial.getVaccine().getName().equals(vaccinStr) && nbDoses > vial.getShotNumber()) {
+                                nbDoses -= vial.getShotNumber();
+                                Log.w("test", vial.getVaccine().getName());
+                                vial.setSlot(newSlot);
+                                vial.updateSlot(newSlot, ele -> {
+                                });
+                            }
+                        }
                     }
-
+                    onReturn();
                 }
             } else {
                 Toast.makeText(this, "Wrong !", Toast.LENGTH_SHORT).show();
             }
-        }
-        else if(v == bt_retour){
+        } else if (v == bt_retour) {
             onReturn();
         }
+
     }
 
 
