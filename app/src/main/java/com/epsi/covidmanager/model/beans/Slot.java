@@ -88,6 +88,18 @@ public class Slot implements Serializable {
         return startTime;
     }
 
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+
+    public void setNbReservedPlaces(int nbReservedPlaces) {
+        this.nbReservedPlaces = nbReservedPlaces;
+    }
+
     public Date getEndTime() {
         return endTime;
     }

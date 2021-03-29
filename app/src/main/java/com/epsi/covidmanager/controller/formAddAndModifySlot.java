@@ -25,6 +25,8 @@ import com.epsi.covidmanager.R;
 import com.epsi.covidmanager.model.beans.Slot;
 import com.epsi.covidmanager.model.beans.Vaccine;
 import com.epsi.covidmanager.model.beans.Vial;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -166,24 +168,31 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
                     }
                 }
                 if (isPossible) {
+                    Log.d("possible", "possible");
                     if (slot != null) {
                         for (Slot slot1 : slots) {
                             if (slot1.getId().equals(slot.getId())) {
                                 for (Vial vial : vials) {
-                                    if (vial.getVaccine().getId().equals(vaccinStr) && vial.getSlot().equals(slot1)) {
-                                        slot1.updateAll(heureDebutStr, heureFinStr, nombreDoseStr, (e) -> {
-                                            synchronized (lockObject) {
-                                                AtomicInteger nb = new AtomicInteger();
-                                                Vial.removeSlot(vials, vial.getVaccine().getId(), lockObject, nb);
-                                                while (nb.get() == vials.size()) {
-                                                    try {
-                                                        lockObject.wait();
-                                                    } catch (InterruptedException interruptedException) {
-                                                        interruptedException.printStackTrace();
-                                                    }
-                                                }
-                                            }
-                                        });
+                                    Log.d("vaccin", vaccinStr);
+                                    if (vial.getSlot() != null && vial.getVaccine().getName().equals(vaccinStr) && vial.getSlot().equals(slot1)) { // Slot déjà attribué
+                                        ParseQuery<ParseObject> query = ParseQuery.getQuery("Slot");
+
+                                        // Retrieve the object by id
+
+                                        vial.getSlot().setStartTime(heureDebutStr);
+                                        vial.getSlot().setEndTime(heureFinStr);
+                                        vial.getSlot().setNbReservedPlaces(nombreDoseStr);
+                                        for (Vial vial2 : vials) {
+                                            vial2.setSlot(null);
+                                            vial2.removeSlot(vial.getVaccine().getId(), ele -> {
+                                            });
+                                        }
+                                        Log.d("good", "done");
+                                        Intent intent = new Intent(this, DashBoardActivity.class);
+                                        intent.putExtra("vaccines", vaccines);
+                                        intent.putExtra("slots", slots);
+                                        intent.putExtra("vials", vials);
+                                        startActivity(intent);
                                         //update des vials
                                         //for (Vial vial1 : vials) {
                                         //    if (vial1.getShotNumber() > totalDoses) {
@@ -209,7 +218,22 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
                                         //        Vial.insert(vialsBis);
                                         //        onReturn();
                                         //    }
-
+                                        break;
+                                    } else if (vial.getVaccine().getName().equals(vaccinStr)) { // Slot vide
+                                        for (Vial vial2 : vials) {
+                                            if (vial2.getSlot() != null && vial2.getSlot().getId().equals(slot1.getId())) {
+                                                vial2.setSlot(null);
+                                                vial2.removeSlot(vial.getVaccine().getId(), ele -> {
+                                                });
+                                            }
+                                        }
+                                        Log.d("good", "done");
+                                        Intent intent = new Intent(this, DashBoardActivity.class);
+                                        intent.putExtra("vaccines", vaccines);
+                                        intent.putExtra("slots", slots);
+                                        intent.putExtra("vials", vials);
+                                        startActivity(intent);
+                                        break;
                                     }
                                 }
                                 break;

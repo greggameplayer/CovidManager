@@ -60,6 +60,10 @@ public class Vial implements Serializable {
         return slot;
     }
 
+    public void setSlot(Slot slot) {
+        this.slot = slot;
+    }
+
     public static void findAll(ArrayList<Vaccine> vaccines, ArrayList<Slot> slots, AtomicReference<List<ParseObject>> newVials) {
 
         // Creates a new ParseQuery object to help us fetch MyCustomClass objects
