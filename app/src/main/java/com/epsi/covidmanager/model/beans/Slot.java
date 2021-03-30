@@ -117,8 +117,8 @@ public class Slot implements Serializable {
     }
 
     public String getDates(){
-        SimpleDateFormat formaterFull = new SimpleDateFormat("d/MM/yyyy hh:mm");
-        SimpleDateFormat formaterDMY = new SimpleDateFormat("d/MM/yyyy");
+        SimpleDateFormat formaterFull = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+        SimpleDateFormat formaterDMY = new SimpleDateFormat("dd/MM/yyyy");
         SimpleDateFormat formaterHM = new SimpleDateFormat("hh:mm");
         String date = formaterDMY.format(this.getStartTime())+ "   " + formaterHM.format(this.getStartTime()) + " - " + formaterHM.format(this.getEndTime());
         if (!formaterDMY.format(this.getStartTime()).equals(formaterDMY.format(this.getEndTime()))){

@@ -63,7 +63,6 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         vaccines = (ArrayList<Vaccine>) getIntent().getSerializableExtra("vaccines");
         slots = (ArrayList<Slot>) getIntent().getSerializableExtra("slots");
         vials = (ArrayList<Vial>) getIntent().getSerializableExtra("vials");
-        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Paris"));
 
         ArrayList<String> tabNameVaccines = new ArrayList<>();
 
@@ -147,8 +146,9 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
                 Date heureFinStr = null;
 
                 try {
-                    heureDebutStr = dateFormat.parse(String.valueOf(heureDebut.getText()));
-                    heureFinStr = dateFormat.parse(String.valueOf(heureFin.getText()));
+                    dateFormat.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
+                    heureDebutStr = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse(String.valueOf(heureDebut.getText()));
+                    heureFinStr = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse(String.valueOf(heureFin.getText()));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -181,16 +181,16 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
                 //    isPossible = false;
                 //    break;
                 //}
-                if (heureDebutStr.after(heureFinStr)) {
+                if (heureDebutStr.after(heureFinStr) && isPossible) {
                     Toast.makeText(this, "La date de fin ne peut pas être avant la date de début", Toast.LENGTH_LONG).show();
                     isPossible = false;
                 }
 
-                if (nombreDoseStr > totalDoses) {
+                if (nombreDoseStr > totalDoses && isPossible) {
                     Toast.makeText(this, "Le nombre de doses entrées est supérieur au stock actuel (" + totalDoses + ")", Toast.LENGTH_LONG).show();
                     isPossible = false;
                 }
-                if (nombreDoseStr != incrementDoses) {
+                if (nombreDoseStr != incrementDoses && isPossible) {
                     Toast.makeText(this, "Un nombre total de " + nombreDoseStr + " doses n'est pas atteignable de façon exacte ( trop plein de :" + Math.abs(incrementDoses - nombreDoseStr) + ")", Toast.LENGTH_LONG).show();
                     isPossible = false;
                 }
@@ -202,15 +202,57 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
                                 slot1.setEndTime(heureFinStr);
                                 slot1.setStartTime(heureDebutStr);
                                 slot1.setNbInitialPlaces(nombreDoseStr);
-                                slot1.updateAllWithInitial(slot1.getStartTime(), slot1.getEndTime(), slot1.getNbInitialPlaces(), ele -> {
+                                slot1.setNbReservedPlaces(0);
+                                ParseQuery<ParseObject> query = ParseQuery.getQuery("Slot");
+
+                                // Retrieve the object by id
+                                Date finalHeureDebutStr = heureDebutStr;
+                                Date finalHeureFinStr = heureFinStr;
+                                query.getInBackground(slot1.getId(), (object, e) -> {
+                                    if (e == null) {
+                                        //Object was successfully retrieved
+                                        // Update the fields we want to
+                                        slot1.setStartTime(finalHeureDebutStr);
+                                        slot1.setEndTime(finalHeureFinStr);
+                                        slot1.setNbInitialPlaces(nombreDoseStr);
+                                        object.put("startTime", slot1.getStartTime());
+                                        object.put("endTime", slot1.getEndTime());
+                                        object.put("nbInitialPlaces", slot1.getNbInitialPlaces());
+                                        object.put("nbReservedPlaces", 0);
+
+                                        //All other fields will remain the same
+                                        object.saveInBackground((ell) -> {
+
+                                        });
+
+                                    } else {
+                                        // something went wrong
+                                        Log.d("ERRORUPDATE", e.getMessage());
+                                    }
                                 });
                                 for (Vial vial : vials) {
                                     if (vial.getSlot() != null && vial.getVaccine().getName().equals(vaccinStr) && vial.getSlot().equals(slot1)) {
-                                        vial.getSlot().setStartTime(heureDebutStr);
-                                        vial.getSlot().setEndTime(heureFinStr);
-                                        vial.getSlot().setNbReservedPlaces(nombreDoseStr);
                                         vial.setSlot(slot1);
                                         vial.updateSlot(slot1, ele -> {
+                                        });
+
+                                        // Retrieve the object by id
+                                        query.getInBackground(vial.getId(), (object, e) -> {
+                                            if (e == null) {
+                                                //Object was successfully retrieved
+                                                // Update the fields we want to
+                                                vial.setSlot(slot1);
+                                                object.put("slotId", vial.getSlot().getId());
+
+                                                //All other fields will remain the same
+                                                object.saveInBackground((el) -> {
+
+                                                });
+
+                                            } else {
+                                                // something went wrong
+                                                Log.d("ERRORUPDATE", e.getMessage());
+                                            }
                                         });
                                     }
                                 }
