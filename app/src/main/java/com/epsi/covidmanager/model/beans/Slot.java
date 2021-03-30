@@ -25,7 +25,7 @@ public class Slot implements Serializable {
     private static final Calendar CALENDAR = Calendar.getInstance();
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
 
-    private final String _id;
+    private String _id;
     private Date startTime;
     private Date endTime;
     private int nbReservedPlaces;
@@ -102,6 +102,10 @@ public class Slot implements Serializable {
 
     public void setNbReservedPlaces(int nbReservedPlaces) {
         this.nbReservedPlaces = nbReservedPlaces;
+    }
+
+    public void setId(String id) {
+        this._id = id;
     }
 
     public Date getEndTime() {

@@ -1,8 +1,10 @@
 package com.epsi.covidmanager.controller;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -35,8 +37,10 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.TimeZone;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class formAddAndModifySlot extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener {
@@ -50,7 +54,7 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
     private ArrayList<Vaccine> vaccines;
     private AwesomeValidation heureValidation = new AwesomeValidation(ValidationStyle.UNDERLABEL);
     private SimpleDateFormat dateFormat;
-    private final Object lockObject = new Object();
+    private String oldVaccin;
 
     private Slot slot;
 
@@ -123,7 +127,11 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        if (oldVaccin == null) {
+            oldVaccin = (String) parent.getItemAtPosition(position);
+        }
         vaccin = (String) parent.getItemAtPosition(position);
+        Log.w("vaccin", vaccin);
 
     }
 
@@ -138,9 +146,18 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         if (v == bt_valider) {
             if (heureValidation.validate()) {
                 boolean isPossible = true;
-                int totalDoses = 0, nbDoses = 0, incrementDoses = 0;
+                int totalDoses = 0;
+                int nbDoses = 0;
+                final int[] incrementDoses = {0};
 
                 String vaccinStr = vaccin;
+                Vaccine vaccinObj = null;
+                for (Vaccine vaccine : vaccines) {
+                    if (vaccine.getName().equals(vaccinStr)) {
+                        vaccinObj = vaccine;
+                        break;
+                    }
+                }
                 int nombreDoseStr = Integer.parseInt(nbDose.getText().toString());
                 Date heureDebutStr = null;
                 Date heureFinStr = null;
@@ -160,13 +177,12 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
                         totalDoses += vial.getShotNumber();
                         if (nbDoses >= vial.getShotNumber()) {
                             nbDoses -= vial.getShotNumber();
-                            incrementDoses += vial.getShotNumber();
-                            Log.w("test", String.valueOf(incrementDoses));
+                            incrementDoses[0] += vial.getShotNumber();
                         }
                     }
 
-                    for (Vial vial1 : vials){
-                        if ( vial1.getSlot()!= null && ((vial1.getSlot().getStartTime().after(heureDebutStr) && vial1.getSlot().getEndTime().before(heureDebutStr)) || (vial1.getSlot().getStartTime().after(heureFinStr) && vial1.getSlot().getEndTime().before(heureFinStr)))) {
+                    for (Vial vial1 : vials) {
+                        if (vial1.getSlot() != null && ((vial1.getSlot().getStartTime().after(heureDebutStr) && vial1.getSlot().getEndTime().before(heureDebutStr)) || (vial1.getSlot().getStartTime().after(heureFinStr) && vial1.getSlot().getEndTime().before(heureFinStr)))) {
                             Toast.makeText(this, "Les différents créneaux ne peuvent pas se superposer ( créneaux existant concerné :" + vial.getSlot().getStartTime() + " - " + vial.getSlot().getEndTime() + ")", Toast.LENGTH_LONG).show();
                             isPossible = false;
                             break;
@@ -190,19 +206,21 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
                     Toast.makeText(this, "Le nombre de doses entrées est supérieur au stock actuel (" + totalDoses + ")", Toast.LENGTH_LONG).show();
                     isPossible = false;
                 }
-                if (nombreDoseStr != incrementDoses && isPossible) {
-                    Toast.makeText(this, "Un nombre total de " + nombreDoseStr + " doses n'est pas atteignable de façon exacte ( trop plein de :" + Math.abs(incrementDoses - nombreDoseStr) + ")", Toast.LENGTH_LONG).show();
+                if (nombreDoseStr != incrementDoses[0] && isPossible) {
+                    Toast.makeText(this, "Un nombre total de " + nombreDoseStr + " doses n'est pas atteignable de façon exacte ( trop plein de :" + Math.abs(incrementDoses[0] - nombreDoseStr) + ")", Toast.LENGTH_LONG).show();
+                    isPossible = false;
+                }
+                if (slot != null && nombreDoseStr < slot.getNbReservedPlaces() && isPossible) {
+                    Toast.makeText(this, "Un nombre de " + nombreDoseStr + " doses est inférieur au nombre de place réservé (" + slot.getNbReservedPlaces() + ")", Toast.LENGTH_LONG).show();
                     isPossible = false;
                 }
                 if (isPossible) {
-                    Log.d("possible", "possible");
                     if (slot != null) {
                         for (Slot slot1 : slots) {
                             if (slot1.getId().equals(slot.getId())) {
                                 slot1.setEndTime(heureFinStr);
                                 slot1.setStartTime(heureDebutStr);
                                 slot1.setNbInitialPlaces(nombreDoseStr);
-                                slot1.setNbReservedPlaces(0);
                                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Slot");
 
                                 // Retrieve the object by id
@@ -218,7 +236,6 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
                                         object.put("startTime", slot1.getStartTime());
                                         object.put("endTime", slot1.getEndTime());
                                         object.put("nbInitialPlaces", slot1.getNbInitialPlaces());
-                                        object.put("nbReservedPlaces", 0);
 
                                         //All other fields will remain the same
                                         object.saveInBackground((ell) -> {
@@ -227,53 +244,165 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
 
                                     } else {
                                         // something went wrong
-                                        Log.d("ERRORUPDATE", e.getMessage());
+                                        Log.d("ERRORUPDATE1", e.getMessage());
                                     }
                                 });
+                                AtomicBoolean deleteFinish = new AtomicBoolean(false);
+                                AtomicBoolean firstTime = new AtomicBoolean(false);
                                 for (Vial vial : vials) {
-                                    if (vial.getSlot() != null && vial.getVaccine().getName().equals(vaccinStr) && vial.getSlot().equals(slot1)) {
-                                        vial.setSlot(slot1);
-                                        vial.updateSlot(slot1, ele -> {
-                                        });
-
-                                        // Retrieve the object by id
-                                        query.getInBackground(vial.getId(), (object, e) -> {
-                                            if (e == null) {
-                                                //Object was successfully retrieved
-                                                // Update the fields we want to
+                                    Object lockObject = new Object();
+                                    Thread updateThread = new Thread() {
+                                        @Override
+                                        public void run() {
+                                            Log.d("WAIT", "2");
+                                            if (vial.getVaccine().getName().equals(vaccinStr) && incrementDoses[0] >= vial.getShotNumber()) {
+                                                incrementDoses[0] -= vial.getShotNumber();
                                                 vial.setSlot(slot1);
-                                                object.put("slotId", vial.getSlot().getId());
+                                                ParseQuery<ParseObject> queryVial = ParseQuery.getQuery("Vial");
+                                                queryVial.getInBackground(vial.getId(), (object1, a) -> {
+                                                    synchronized (lockObject) {
+                                                        if (a == null) {
+                                                            //Object was successfully retrieved
+                                                            // Update the fields we want to
+                                                            object1.put("slotId", vial.getSlot().getId());
 
-                                                //All other fields will remain the same
-                                                object.saveInBackground((el) -> {
+                                                            //All other fields will remain the same
+                                                            object1.saveInBackground((zd) -> {
 
+                                                            });
+
+                                                        } else {
+                                                            // something went wrong
+                                                            Log.d("ERRORUPDATE", a.getMessage());
+                                                        }
+                                                    }
                                                 });
-
-                                            } else {
-                                                // something went wrong
-                                                Log.d("ERRORUPDATE", e.getMessage());
                                             }
-                                        });
-                                    }
+                                        }
+                                    };
+                                    Thread removeThread = new Thread() {
+                                        @Override
+                                        public void run() {
+                                            if (vial.getVaccine().getName().equals(oldVaccin)) {
+                                                Log.w("slot1.getId()", slot1.getId());
+                                                if (vial.getSlot() != null && vial.getSlot().getId().equals(slot1.getId())) {
+                                                    Log.w("vialTEST", vial.getVaccine().getName());
+                                                    vial.setSlot(null);
+                                                    ParseQuery<ParseObject> queryVial = ParseQuery.getQuery("Vial");
+                                                    queryVial.getInBackground(vial.getId(), (object, e) -> {
+                                                        synchronized (lockObject) {
+                                                            if (e == null) {
+                                                                //Object was successfully retrieved
+                                                                // Update the fields we want to
+                                                                object.remove("slotId");
+
+                                                                //All other fields will remain the same
+                                                                object.saveInBackground((el) -> {
+                                                                    Log.d("WAIT", "1");
+                                                                    updateThread.start();
+                                                                });
+
+                                                            } else {
+                                                                // something went wrong
+                                                                Log.d("ERRORUPDATE2", e.getMessage());
+                                                            }
+                                                        }
+                                                    });
+                                                }
+                                            } else {
+                                                synchronized (lockObject) {
+                                                    Log.d("WAIT", "1");
+                                                    updateThread.start();
+                                                }
+                                            }
+                                        }
+                                    };
+
+                                    removeThread.start();
                                 }
                             }
                         }
+                        onReturn();
                     } else {
-                        Slot newSlot = new Slot(heureFinStr, heureDebutStr, 0, nombreDoseStr);
-                        Slot.insert(newSlot, this, (e) -> {
-                        });
-                        slots.add(newSlot);
-                        for (Vial vial : vials) {
-                            if (vial.getSlot() == null && vial.getVaccine().getName().equals(vaccinStr) && nbDoses > vial.getShotNumber()) {
-                                nbDoses -= vial.getShotNumber();
-                                Log.w("test", vial.getVaccine().getName());
-                                vial.setSlot(newSlot);
-                                vial.updateSlot(newSlot, ele -> {
-                                });
+                        String newID = Integer.toString((int) (Math.random() * ((999999999) + 1)));
+                        Object insertLockObject = new Object();
+                        Slot newSlot = new Slot(newID, heureDebutStr, heureFinStr, 0, nombreDoseStr);
+                        Context that = this;
+
+                        Thread insertUpdateThread = new Thread() {
+                            @Override
+                            public void run() {
+                                synchronized (insertLockObject) {
+                                    for (Vial vial : vials) {
+                                        if (vial.getSlot() == null && vial.getVaccine().getName().equals(vaccinStr) && incrementDoses[0] >= vial.getShotNumber()) {
+                                            vial.setSlot(newSlot);
+                                            ParseQuery<ParseObject> query = ParseQuery.getQuery("Vial");
+
+                                            // Retrieve the object by id
+                                            query.getInBackground(vial.getId(), (object, e) -> {
+                                                if (e == null) {
+                                                    //Object was successfully retrieved
+                                                    // Update the fields we want to
+                                                    vial.setSlot(newSlot);
+                                                    object.put("slotId", vial.getSlot().getId());
+                                                    Log.w("insert", "insertSlot in Vials");
+
+                                                    //All other fields will remain the same
+                                                    object.saveInBackground((l) -> {
+                                                        incrementDoses[0] -= vial.getShotNumber();
+                                                    });
+                                                } else {
+                                                    // something went wrong
+                                                    Log.d("ERRORUPDATE", e.getMessage());
+                                                }
+                                            });
+                                        }
+                                    }
+                                    insertLockObject.notify();
+                                }
                             }
-                        }
+                        };
+                        Thread getThread = new Thread() {
+                            @Override
+                            public void run() {
+                                ParseQuery<ParseObject> queryFind = ParseQuery.getQuery("Slot");
+                                queryFind.whereEqualTo("startTime", newSlot.getStartTime()).whereEqualTo("endTime", newSlot.getEndTime());
+                                try {
+                                    List<ParseObject> object = queryFind.find();
+                                    newSlot.setId(object.get(0).getObjectId());
+                                    slots.add(newSlot);
+                                    insertUpdateThread.start();
+                                } catch (com.parse.ParseException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        };
+                        Thread insertThread = new Thread() {
+                            @Override
+                            public void run() {
+                                ParseObject entity = new ParseObject("Slot");
+
+                                entity.put("startTime", newSlot.getStartTime());
+                                entity.put("endTime", newSlot.getEndTime());
+                                entity.put("nbReservedPlaces", newSlot.getNbReservedPlaces());
+                                entity.put("nbInitialPlaces", newSlot.getNbInitialPlaces());
+                                entity.saveInBackground((e -> {
+                                    synchronized (insertLockObject) {
+                                        Log.w("insert", "insertSlot");
+                                        getThread.start();
+                                        try {
+                                            insertLockObject.wait();
+                                        } catch (InterruptedException interruptedException) {
+                                            interruptedException.printStackTrace();
+                                        }
+
+                                        onReturn();
+                                    }
+                                }));
+                            }
+                        };
+                        insertThread.start();
                     }
-                    onReturn();
                 }
             } else {
                 Toast.makeText(this, "Wrong !", Toast.LENGTH_SHORT).show();

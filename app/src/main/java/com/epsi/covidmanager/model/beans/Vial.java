@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Vial implements Serializable {
     private final String id;
     private int shotNumber;
-    private final Vaccine vaccine;
+    private Vaccine vaccine;
     private Slot slot;
 
     public Vial(String _id, int shotNumber, Vaccine vaccine, Slot slot) {
@@ -62,6 +62,10 @@ public class Vial implements Serializable {
 
     public void setSlot(Slot slot) {
         this.slot = slot;
+    }
+
+    public void setVaccine(Vaccine vaccine){
+        this.vaccine = vaccine;
     }
 
     public static void findAll(ArrayList<Vaccine> vaccines, ArrayList<Slot> slots, AtomicReference<List<ParseObject>> newVials) {
