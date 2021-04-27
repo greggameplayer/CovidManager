@@ -29,7 +29,7 @@ public class Vial implements Serializable {
 
     @SerializedName("idSlot")
     @Expose
-    private int idSlot = 1;
+    private int idSlot;
 
     @SerializedName("idVaccine")
     @Expose
