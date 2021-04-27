@@ -17,7 +17,6 @@ import com.epsi.covidmanager.model.beans.Slot;
 import com.epsi.covidmanager.model.beans.Vaccine;
 import com.epsi.covidmanager.model.beans.Vial;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,7 +27,6 @@ public class DetailsVaccine extends AppCompatActivity implements View.OnClickLis
     private Vaccine vaccine;
 
     private ArrayList<Vaccine> vaccines;
-    private ArrayList<Slot> slots;
     private ArrayList<Vial> vials;
 
     private Button bt_details_vaccine_add, bt_details_vaccine_return;
@@ -39,12 +37,10 @@ public class DetailsVaccine extends AppCompatActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.details_vaccine);
-
         vaccine = (Vaccine) getIntent().getExtras().getSerializable("vaccine");
 
 
         vaccines = (ArrayList<Vaccine>) getIntent().getSerializableExtra("vaccines");
-        slots = (ArrayList<Slot>) getIntent().getSerializableExtra("slots");
         vials = (ArrayList<Vial>) getIntent().getSerializableExtra("vials");
 
         tv_detail_vaccine_name = findViewById(R.id.tv_detail_vaccine_name);
@@ -71,15 +67,11 @@ public class DetailsVaccine extends AppCompatActivity implements View.OnClickLis
             Intent intent = new Intent(this, formAddVaccine.class);
             intent.putExtra("vaccine", vaccine);
             intent.putExtra("vaccines", vaccines);
-            intent.putExtra("slots", slots);
             intent.putExtra("vials", vials);
             startActivity(intent);
         }
         else{
             Intent intent = new Intent(this, VaccineDashboard.class);
-            intent.putExtra("vaccines", vaccines);
-            intent.putExtra("slots", slots);
-            intent.putExtra("vials", vials);
             startActivity(intent);
         }
 

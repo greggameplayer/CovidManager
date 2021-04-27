@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 import com.parse.ParseException;
@@ -25,18 +27,33 @@ public class Slot implements Serializable {
     private static final Calendar CALENDAR = Calendar.getInstance();
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
 
-    private String _id;
+
+    @SerializedName("idSlot")
+    @Expose
+    private int idSlot;
+
+    @SerializedName("startTime")
+    @Expose
     private Date startTime;
+
+    @SerializedName("endTime")
+    @Expose
     private Date endTime;
+
+    @SerializedName("nbReservedPlaces")
+    @Expose
     private int nbReservedPlaces;
+
+    @SerializedName("nbInitialPlaces")
+    @Expose
     private int nbInitialPlaces;
 
-    public Slot(String _id, Date startTime, Date endTime, int nbReservedPlaces, int nbInitialPlaces) {
+    public Slot(int _id, Date startTime, Date endTime, int nbReservedPlaces, int nbInitialPlaces) {
         this.startTime = startTime;
         this.nbInitialPlaces = nbInitialPlaces;
         this.endTime = endTime;
         this.nbReservedPlaces = nbReservedPlaces;
-        this._id = _id;
+        this.idSlot = _id;
         Logger.addLogAdapter(new AndroidLogAdapter());
     }
 
@@ -45,7 +62,6 @@ public class Slot implements Serializable {
         this.endTime = endTime;
         this.nbInitialPlaces = nbInitialPlaces;
         this.nbReservedPlaces = nbReservedPlaces;
-        this._id = null;
         Logger.addLogAdapter(new AndroidLogAdapter());
     }
 
@@ -77,35 +93,15 @@ public class Slot implements Serializable {
 
     }
     /*
-    Getter and Setter
+    Getter
      */
 
-    public String getId() {
-        return _id;
+    public int getId() {
+        return idSlot;
     }
 
     public Date getStartTime() {
         return startTime;
-    }
-
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
-
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
-    }
-
-    public void setNbInitialPlaces(int nbInitialPlaces) {
-        this.nbInitialPlaces = nbInitialPlaces;
-    }
-
-    public void setNbReservedPlaces(int nbReservedPlaces) {
-        this.nbReservedPlaces = nbReservedPlaces;
-    }
-
-    public void setId(String id) {
-        this._id = id;
     }
 
     public Date getEndTime() {
@@ -131,150 +127,5 @@ public class Slot implements Serializable {
         return (date);
     };
 
-    public static ArrayList<Slot> findAll(Context toastContext, ArrayList<Vial> vials) {
 
-        // Creates a new ParseQuery object to help us fetch MyCustomClass objects
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Slot");
-
-        // Fetches data synchronously
-        try {
-            ArrayList<Slot> slots = new ArrayList<>();
-            List<ParseObject> results = query.find();
-
-            for (ParseObject result : results) {
-                slots.add(new Slot(result.getObjectId(), result.getDate("startTime"), result.getDate("endTime"), result.getInt("nbReservedPlaces"), result.getInt("nbInitialPlaces")));
-            }
-            return slots;
-        } catch (ParseException | IndexOutOfBoundsException e) {
-            Toast.makeText(toastContext, "There are no slots", Toast.LENGTH_SHORT).show();
-        }
-        return null;
-    }
-
-    public void delete(Vial vial, SaveCallback callback) {
-        vial.removeSlot(callback);
-    }
-
-    public void updateStartTime(Date newValue, SaveCallback callback) {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Slot");
-
-        // Retrieve the object by id
-        query.getInBackground(this._id, (object, e) -> {
-            if (e == null) {
-                //Object was successfully retrieved
-                // Update the fields we want to
-                this.startTime = newValue;
-                object.put("startTime", this.getStartTime());
-
-                //All other fields will remain the same
-                object.saveInBackground(callback);
-
-            } else {
-                // something went wrong
-                Log.d("ERRORUPDATE", e.getMessage());
-            }
-        });
-    }
-
-    public void updateEndTime(Date newValue, SaveCallback callback) {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Slot");
-
-        // Retrieve the object by id
-        query.getInBackground(this._id, (object, e) -> {
-            if (e == null) {
-                //Object was successfully retrieved
-                // Update the fields we want to
-                this.endTime = newValue;
-                object.put("endTime", this.getEndTime());
-
-                //All other fields will remain the same
-                object.saveInBackground(callback);
-
-            } else {
-                // something went wrong
-                Log.d("ERRORUPDATE", e.getMessage());
-            }
-        });
-    }
-
-    public void updateNbReservedPlaces(int newValue, SaveCallback callback) {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Slot");
-
-        // Retrieve the object by id
-        query.getInBackground(this._id, (object, e) -> {
-            if (e == null) {
-                //Object was successfully retrieved
-                // Update the fields we want to
-                this.nbReservedPlaces = newValue;
-                object.put("nbReservedPlaces", this.getNbReservedPlaces());
-
-                //All other fields will remain the same
-                object.saveInBackground(callback);
-
-            } else {
-                // something went wrong
-                Log.d("ERRORUPDATE", e.getMessage());
-            }
-        });
-    }
-
-    public void updateAllWithReserved(Date dateDebut, Date dateFin, int nbPlaces, SaveCallback callback){
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Slot");
-
-        // Retrieve the object by id
-        query.getInBackground(this._id, (object, e) -> {
-            if (e == null) {
-                //Object was successfully retrieved
-                // Update the fields we want to
-                this.startTime = dateDebut;
-                this.endTime = dateFin;
-                this.nbReservedPlaces = nbPlaces;
-                object.put("startTime", this.getStartTime());
-                object.put("endTime", this.getEndTime());
-                object.put("nbReservedPlaces", this.getNbReservedPlaces());
-
-                //All other fields will remain the same
-                object.saveInBackground(callback);
-
-            } else {
-                // something went wrong
-                Log.d("ERRORUPDATE", e.getMessage());
-            }
-        });
-    }
-
-    public void updateAllWithInitial(Date dateDebut, Date dateFin, int nbPlaces, SaveCallback callback){
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Slot");
-
-        // Retrieve the object by id
-        query.getInBackground(this._id, (object, e) -> {
-            if (e == null) {
-                //Object was successfully retrieved
-                // Update the fields we want to
-                this.startTime = dateDebut;
-                this.endTime = dateFin;
-                this.nbInitialPlaces = nbPlaces;
-                object.put("startTime", this.getStartTime());
-                object.put("endTime", this.getEndTime());
-                object.put("nbReservedPlaces", this.getNbInitialPlaces());
-
-                //All other fields will remain the same
-                object.saveInBackground(callback);
-
-            } else {
-                // something went wrong
-                Log.d("ERRORUPDATE", e.getMessage());
-            }
-        });
-    }
-
-    public static void insert(Slot slot, Context toastContext, SaveCallback callback) {
-        ParseObject entity = new ParseObject("Slot");
-
-        entity.put("startTime", slot.getStartTime());
-        entity.put("endTime", slot.getEndTime());
-        entity.put("nbReservedPlaces", slot.getNbReservedPlaces());
-        entity.put("nbInitialPlaces", slot.getNbInitialPlaces());
-        entity.saveInBackground(callback);
-    }
 }

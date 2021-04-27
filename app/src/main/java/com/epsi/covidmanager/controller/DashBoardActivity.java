@@ -30,12 +30,7 @@ import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class DashBoardActivity extends AppCompatActivity implements SlotAdaptater.OnSlotListener, View.OnClickListener {
     //Composoants graphiques
@@ -49,7 +44,7 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
     private ArrayList<Slot> slots;
     private ArrayList<Vial> vials;
     private ArrayList<Vaccine> vaccines;
-    private ArrayList<String> IDdisplayedSlots = new ArrayList<>();
+    private ArrayList<Integer> IDdisplayedSlots = new ArrayList<>();
     private ArrayList<Slot> displayedSlots = new ArrayList<>();
     private ArrayList<Vial> displayedVials = new ArrayList<>();
     //Outil
@@ -89,7 +84,7 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
             if (vial.getSlot() != null) {
                 displayedVials.add(vial);
                 for (Slot slot : slots) {
-                    if (vial.getSlot().getId().equals(slot.getId())) {
+                    if (vial.getSlot().getId() == slot.getId()) {
                         IDdisplayedSlots.add(vial.getSlot().getId());
                         break;
                     }
@@ -98,8 +93,8 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
         }
 
         for (Slot slot : slots){
-            for (String IDslot: IDdisplayedSlots) {
-                if(IDslot.equals(slot.getId())){
+            for (Integer IDslot: IDdisplayedSlots) {
+                if(IDslot == slot.getId()){
                     displayedSlots.add(slot);
                     break;
                 }

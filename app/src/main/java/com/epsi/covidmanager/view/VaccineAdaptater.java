@@ -20,15 +20,13 @@ public class VaccineAdaptater extends RecyclerView.Adapter<VaccineAdaptater.View
 
     private ArrayList<Vaccine> vaccines;
     private VaccineAdaptater.OnVaccineListener onVaccineListener;
-    private ArrayList<Slot> slots;
     private ArrayList<Vial> vials;
 
 
 
-    public VaccineAdaptater(ArrayList<Vaccine> vaccines, ArrayList<Slot> slots, ArrayList<Vial> vials, VaccineAdaptater.OnVaccineListener onVaccineListenerLister) {
+    public VaccineAdaptater(ArrayList<Vaccine> vaccines, ArrayList<Vial> vials, VaccineAdaptater.OnVaccineListener onVaccineListenerLister) {
         this.vaccines = vaccines;
         this.onVaccineListener = onVaccineListenerLister;
-        this.slots = slots;
         this.vials = vials;
 
     }

@@ -11,14 +11,27 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.epsi.covidmanager.R;
 import com.epsi.covidmanager.model.beans.Slot;
 import com.epsi.covidmanager.model.beans.Vaccine;
 import com.epsi.covidmanager.model.beans.Vial;
-import com.parse.ParseException;
+import com.epsi.covidmanager.model.webservice.APIService;
+import com.epsi.covidmanager.model.webservice.RetrofitHttpUtilis;
+import com.epsi.covidmanager.view.VaccineAdaptater;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class formAddVaccine extends AppCompatActivity implements View.OnClickListener {
 
@@ -27,7 +40,6 @@ public class formAddVaccine extends AppCompatActivity implements View.OnClickLis
     private int nbVial, nbDose;
 
     private ArrayList<Vaccine> vaccines;
-    private ArrayList<Slot> slots;
     private ArrayList<Vial> vials;
 
 
@@ -43,7 +55,6 @@ public class formAddVaccine extends AppCompatActivity implements View.OnClickLis
         vaccine = (Vaccine) getIntent().getExtras().getSerializable("vaccine");
 
         vaccines = (ArrayList<Vaccine>) getIntent().getSerializableExtra("vaccines");
-        slots = (ArrayList<Slot>) getIntent().getSerializableExtra("slots");
         vials = (ArrayList<Vial>) getIntent().getSerializableExtra("vials");
 
         et_form_vaccine_nbVial = findViewById(R.id.et_form_vaccine_nbVial);
@@ -79,8 +90,12 @@ public class formAddVaccine extends AppCompatActivity implements View.OnClickLis
         Intent intent = new Intent(this, DetailsVaccine.class);
         intent.putExtra("vaccine", vaccine);
         intent.putExtra("vaccines", vaccines);
-        intent.putExtra("slots", slots);
         intent.putExtra("vials", vials);
+        startActivity(intent);
+    }
+
+    private void onReturnDashboard(){
+        Intent intent = new Intent(this, VaccineDashboard.class);
         startActivity(intent);
     }
     private void onAdd(){
@@ -92,14 +107,44 @@ public class formAddVaccine extends AppCompatActivity implements View.OnClickLis
 
 
         for(int i = 0 ; i < nbVial ; i++){
-            vialsBis.add(new Vial(nbDose, vaccine));
+
+            Vial vial = new Vial(nbDose, vaccine);
+            Log.w("TAGI", vial.toString());
+
+
+            APIService apiService = RetrofitHttpUtilis.getRetrofitInstance().create(APIService.class);
+
+            int j = i;
+            apiService.createVial(vial).enqueue(new Callback<Vial>() {
+                @Override
+                public void onResponse(Call<Vial> call, Response<Vial> response) {
+                    //Ajouter la vérification du code 200
+
+                    try {
+                        Log.w("TAGI", response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    if(j==nbVial){
+                        Log.w("TAGI", "end");
+                        onReturnDashboard();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Vial> call, Throwable t) {
+                    Log.w("TAGI", t.getMessage());
+                }
+            });
+
+            onReturnDashboard();
         }
 
-        vials.addAll(vialsBis);
 
-        Log.w("TAGI", vialsBis.toString());
-        Vial.insert(vialsBis);
-        onReturn();
+
+
+
 
     }
 }
