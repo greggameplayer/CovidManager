@@ -20,10 +20,17 @@ import com.epsi.covidmanager.R;
 import com.epsi.covidmanager.model.beans.Slot;
 import com.epsi.covidmanager.model.beans.Vaccine;
 import com.epsi.covidmanager.model.beans.Vial;
+import com.epsi.covidmanager.model.webservice.APIService;
+import com.epsi.covidmanager.model.webservice.RetrofitHttpUtilis;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
-public class DetailsSlot extends AppCompatActivity  {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class DetailsSlot extends AppCompatActivity implements View.OnClickListener  {
 
     public final static String SLOT_KEY = "SLOT_KEY";
 
@@ -37,7 +44,6 @@ public class DetailsSlot extends AppCompatActivity  {
     //Donnees
     private ArrayList<Slot> slots;
     private ArrayList<Vial> vials;
-    private ArrayList<Vaccine> vaccines;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -47,7 +53,6 @@ public class DetailsSlot extends AppCompatActivity  {
 
         context = this;
 
-        vaccines = (ArrayList<Vaccine>) getIntent().getSerializableExtra("vaccines");
         slots = (ArrayList<Slot>) getIntent().getSerializableExtra("slots");
         vials = (ArrayList<Vial>) getIntent().getSerializableExtra("vials");
 
@@ -73,18 +78,19 @@ public class DetailsSlot extends AppCompatActivity  {
         bt_supprimer = findViewById(R.id.bt_supprimer);
         bt_retour = findViewById(R.id.bt_retour);
 
-        //bt_less.setOnClickListener(this);
-        //bt_plus.setOnClickListener(this);
-        //bt_valider.setOnClickListener(this);
-        //bt_modifier.setOnClickListener(this);
-        //bt_supprimer.setOnClickListener(this);
-        //bt_retour.setOnClickListener(this);
+        bt_less.setOnClickListener(this);
+        bt_plus.setOnClickListener(this);
+        bt_valider.setOnClickListener(this);
+        bt_modifier.setOnClickListener(this);
+        bt_supprimer.setOnClickListener(this);
+        bt_retour.setOnClickListener(this);
 
         tv_slot_details_date.setText(slot.getDates());
-        tv_doses_prevues.setText(Integer.toString(slot.getNbInitialPlaces()));
+        tv_doses_prevues.setText(tv_doses_prevues.getText() + Integer.toString(slot.getNbInitialPlaces()));
+
         for (Vial vial: vials) {
-            if (vial.getSlot() != null && vial.getSlot().getId() == (slot.getId())){
-                tv_vaccin2.setText(vial.getVaccine().getName());
+            if (vial.getSlot() != null && vial.getSlot().getId().equals(slot.getId())){
+                tv_vaccin2.setText( tv_vaccin2.getText() + vial.getVaccine().getName());
                 break;
             }
         }
@@ -93,113 +99,130 @@ public class DetailsSlot extends AppCompatActivity  {
         for (Vial vial: vials) {
             if (vial.getSlot() != null) {
             }
-            if (vial.getSlot() != null && vial.getSlot().getId() == (slot.getId())){
-                Log.d("TEST", Integer.toString(vial.getShotNumber()));
+            if (vial.getSlot() != null && vial.getSlot().getId().equals(slot.getId())){
                 stock = Integer.sum(stock, vial.getShotNumber());
             }
         }
-        tv_stock.setText(Integer.toString(stock));
+        tv_stock.setText(tv_stock.getText() + Integer.toString(stock));
         tv_nb_places.setText(nbPlacesReserved + "/" + slot.getNbInitialPlaces());
         bt_valider.setEnabled(false);
     }
 
-    //@SuppressLint("SetTextI18n")
-    //@Override
-    //public void onClick(View v) {
-    //    if(v == bt_less){
-    //        nbPlacesReserved--;
-    //        if (nbPlacesReserved == slot.getNbReservedPlaces()) {
-    //            bt_valider.setEnabled(false);
-    //        } else if (nbPlacesReserved == 0){
-    //            bt_valider.setEnabled(true);
-    //            bt_less.setEnabled(false);
-    //        }
-    //        else{
-    //            bt_valider.setEnabled(true);
-    //            bt_plus.setEnabled(true);
-    //        }
-    //        tv_nb_places.setText(nbPlacesReserved + "/" + slot.getNbInitialPlaces());
-    //    }
-    //    else if(v == bt_plus){
-    //        nbPlacesReserved++;
-    //        if (nbPlacesReserved == slot.getNbReservedPlaces()) {
-    //            bt_valider.setEnabled(false);
-    //        } else if (nbPlacesReserved == slot.getNbInitialPlaces()){
-    //            bt_plus.setEnabled(false);
-    //            bt_valider.setEnabled(true);
-    //        }
-    //        else{
-    //            bt_less.setEnabled(true);
-    //            bt_valider.setEnabled(true);
-    //        }
-    //        tv_nb_places.setText(nbPlacesReserved + "/" + slot.getNbInitialPlaces());
-    //    }
-    //    else if(v == bt_valider){
-    //        for (Slot slot1 : slots) {
-    //            if (slot1.getId() == (slot.getId())) {
-    //                slot1.updateNbReservedPlaces(nbPlacesReserved, (el) -> {
-    //                    Intent DashBoardActivity = new Intent(context, DashBoardActivity.class);
-    //                    DashBoardActivity.putExtra("vaccines", vaccines);
-    //                    DashBoardActivity.putExtra("slots", slots);
-    //                    DashBoardActivity.putExtra("vials", vials);
-    //                    startActivity(DashBoardActivity);
-    //                });
-    //                break;
-    //            }
-    //        }
-    //    }
-    //    else if (v == bt_modifier){
-    //        Intent intent = new Intent(this, formAddAndModifySlot.class);
-    //        intent.putExtra("slot", slot);
-    //        intent.putExtra("vaccines", vaccines);
-    //        intent.putExtra("slots", slots);
-    //        intent.putExtra("vials", vials);
-//
-    //        startActivity(intent);
-    //    }
-    //    else if (v == bt_supprimer) {
-    //        AlertDialog alertDialog = new AlertDialog.Builder(DetailsSlot.this).create();
-    //        alertDialog.setTitle("Suppresion");
-    //        alertDialog.setMessage("Etes vous sur de vouloir supprimer ce crénaux?");
-    //        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Valider",
-    //                new DialogInterface.OnClickListener() {
-    //                    public void onClick(DialogInterface dialog, int which) {
-    //                        for (Slot slot1 : slots) {
-    //                            if (slot1.getId().equals(slot.getId())) {
-    //                                for (Vial vial: vials) {
-    //                                    if (vial.getSlot() != null && vial.getSlot().getId().equals(slot1.getId())) {
-    //                                        slot1.delete(vial, (el) -> {
-    //                                            Intent DashBoardActivity = new Intent(context, DashBoardActivity.class);
-    //                                            DashBoardActivity.putExtra("vaccines", vaccines);
-    //                                            DashBoardActivity.putExtra("slots", slots);
-    //                                            DashBoardActivity.putExtra("vials", vials);
-    //                                            startActivity(DashBoardActivity);
-    //                                        });
-    //                                    }
-    //                                }
-    //                                break;
-    //                            }
-    //                        }
-    //                    }
-    //                });
-    //        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Annuler",
-    //                new DialogInterface.OnClickListener() {
-    //                    public void onClick(DialogInterface dialog, int which) {
-    //                        Toast.makeText(context, "La suppression a bien été annuler", Toast.LENGTH_LONG).show();
-    //                        dialog.dismiss();
-    //                    }
-    //                });
-    //        alertDialog.show();
-    //    }
-    //    else if (v == bt_retour) {
-    //        Intent DashBoardActivity = new Intent(context, DashBoardActivity.class);
-    //        DashBoardActivity.putExtra("vaccines", vaccines);
-    //        DashBoardActivity.putExtra("slots", slots);
-    //        DashBoardActivity.putExtra("vials", vials);
-    //        startActivity(DashBoardActivity);
-    //    }
-    //    else{
-    //        Toast.makeText(context, "Une erreur s'est produite, veillez réessayer", Toast.LENGTH_SHORT).show();
-    //    }
-    //}
+    @SuppressLint("SetTextI18n")
+    @Override
+    public void onClick(View v) {
+        if(v == bt_less){
+            nbPlacesReserved--;
+            if (nbPlacesReserved == slot.getNbReservedPlaces()) {
+                bt_valider.setEnabled(false);
+            } else if (nbPlacesReserved == 0){
+                bt_valider.setEnabled(true);
+                bt_less.setEnabled(false);
+            }
+            else{
+                bt_valider.setEnabled(true);
+                bt_plus.setEnabled(true);
+            }
+            tv_nb_places.setText(nbPlacesReserved + "/" + slot.getNbInitialPlaces());
+        }
+        else if(v == bt_plus){
+            nbPlacesReserved++;
+            if (nbPlacesReserved == slot.getNbReservedPlaces()) {
+                bt_valider.setEnabled(false);
+            } else if (nbPlacesReserved == slot.getNbInitialPlaces()){
+                bt_plus.setEnabled(false);
+                bt_valider.setEnabled(true);
+            }
+            else{
+                bt_less.setEnabled(true);
+                bt_valider.setEnabled(true);
+            }
+            tv_nb_places.setText(nbPlacesReserved + "/" + slot.getNbInitialPlaces());
+        }
+        else if(v == bt_valider){
+            for (Slot slot1 : slots) {
+                if (slot1.getId().equals(slot.getId())) {
+                    //TODO: revoir format startTime et endTime coté API ou voir pour une convertion en String avant d'envoie
+
+                    APIService apiService = RetrofitHttpUtilis.getRetrofitInstance().create(APIService.class);
+
+                    apiService.updateSlot(slot1.getId(), slot1).enqueue(new Callback<Slot>() {
+                        @Override
+                        public void onResponse(Call<Slot> call, Response<Slot> response) {
+                            try {
+                                Log.w("TAGI", response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            Intent DashBoardActivity = new Intent(context, DashBoardActivity.class);
+                            startActivity(DashBoardActivity);
+                        }
+
+                        @Override
+                        public void onFailure(Call<Slot> call, Throwable t) {
+                            Log.w("TAGI", t);
+                        }
+                    });
+                    break;
+                }
+            }
+        }
+        else if (v == bt_modifier){
+            Intent intent = new Intent(this, formAddAndModifySlot.class);
+            //intent.putExtra("slot", slot);
+            //intent.putExtra("vaccines", vaccines);
+            //intent.putExtra("slots", slots);
+            //intent.putExtra("vials", vials);
+
+            startActivity(intent);
+        }
+        else if (v == bt_supprimer) {
+            AlertDialog alertDialog = new AlertDialog.Builder(DetailsSlot.this).create();
+            alertDialog.setTitle("Suppresion");
+            alertDialog.setMessage("Etes vous sur de vouloir supprimer ce crénaux?");
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Valider",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            for (Slot slot1 : slots) {
+                                if (slot1.getId().equals(slot.getId())) {
+                                    for (Vial vial: vials) {
+                                        if (vial.getSlot() != null && vial.getSlot().getId().equals(slot1.getId())) {
+                                            APIService apiService = RetrofitHttpUtilis.getRetrofitInstance().create(APIService.class);
+
+                                            apiService.deleteSlot(slot1.getId()).enqueue(new Callback<Slot>() {
+                                                @Override
+                                                public void onResponse(Call<Slot> call, Response<Slot> response) {
+                                                    Intent DashBoardActivity = new Intent(context, DashBoardActivity.class);
+                                                    startActivity(DashBoardActivity);
+                                                }
+
+                                                @Override
+                                                public void onFailure(Call<Slot> call, Throwable t) {
+                                                    Log.w("TAGI", t.getMessage());
+                                                }
+                                            });
+                                        }
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    });
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Annuler",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            Toast.makeText(context, "La suppression a bien été annuler", Toast.LENGTH_LONG).show();
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+        }
+        else if (v == bt_retour) {
+            Intent DashBoardActivity = new Intent(context, DashBoardActivity.class);
+            startActivity(DashBoardActivity);
+        }
+        else{
+            Toast.makeText(context, "Une erreur s'est produite, veillez réessayer", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

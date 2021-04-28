@@ -1,30 +1,20 @@
 package com.epsi.covidmanager.model.beans;
 
-import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.SaveCallback;
 
 import java.io.Serializable;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 public class Slot implements Serializable {
-
-    private static final Calendar CALENDAR = Calendar.getInstance();
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
 
 
@@ -125,7 +115,5 @@ public class Slot implements Serializable {
             date = formaterFull.format(this.getStartTime()) +" - "+formaterFull.format(this.getEndTime());
         }
         return (date);
-    };
-
-
+    }
 }

@@ -203,10 +203,6 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
     @Override
     public void onClick(View v) {
         Intent intent = new Intent(this, formAddAndModifySlot.class);
-        intent.putExtra("vaccines", vaccines);
-        intent.putExtra("slots", slots);
-        intent.putExtra("vials", vials);
-
         startActivity(intent);
     }
 
@@ -214,7 +210,6 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
     public void onClick(Slot slot) {
         Intent intent = new Intent(this, DetailsSlot.class);
         intent.putExtra(DetailsSlot.SLOT_KEY, slot);
-        intent.putExtra("vaccines", vaccines);
         intent.putExtra("slots", slots);
         intent.putExtra("vials", vials);
         startActivity(intent);

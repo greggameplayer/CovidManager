@@ -50,15 +50,11 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_slot_details_date">
 
         <TextView
+            android:id="@+id/tv_doses_prevues"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Dose(s) prévue(s) : " />
 
-        <TextView
-            android:id="@+id/tv_doses_prevues"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TextView" />
     </LinearLayout>
 
     <LinearLayout
@@ -72,16 +68,11 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout8">
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/tv_vaccin2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Type de vaccin : " />
 
-        <TextView
-            android:id="@+id/tv_vaccin2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="TextView" />
     </LinearLayout>
 
     <LinearLayout
@@ -95,18 +86,12 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout9">
 
         <TextView
-            android:id="@+id/textView9"
+            android:id="@+id/tv_stock"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Stock en cours : " />
 
-        <TextView
-            android:id="@+id/tv_stock"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="TextView" />
     </LinearLayout>
 
     <TextView
