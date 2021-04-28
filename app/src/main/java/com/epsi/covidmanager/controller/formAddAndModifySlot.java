@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+import java.lang.Math;
 
 import androidx.appcompat.app.AppCompatActivity;
 import retrofit2.Call;
@@ -46,6 +47,7 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
     private SimpleDateFormat dateFormat;
     private String oldVaccin;
     private ArrayList<Vial> vialsByVaccine = new ArrayList<>();
+
 
     private Slot slot;
 
@@ -371,16 +373,16 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         //onReturn();
         //
         if (v == bt_valider) {
-            if(slot != null){
-                deleteSlot();
-            }
-            else {
                 getGoodVaccine();
-            }
 
         } else if (v == bt_retour) {
             onReturn();
         }
+    }
+
+    private void onReturn() {
+        Intent intent = new Intent(this, DashBoardActivity.class);
+        startActivity(intent);
     }
 
     private void getGoodVaccine(){
@@ -393,10 +395,7 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
     }
 
 
-    private void onReturn() {
-        Intent intent = new Intent(this, DashBoardActivity.class);
-        startActivity(intent);
-    }
+
 
     private void getVialsByIdVaccineWithSlotNotNull(int IdVaccine) {
         APIService apiService = RetrofitHttpUtilis.getRetrofitInstance().create(APIService.class);
@@ -404,7 +403,14 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
             @Override
             public void onResponse(Call<List<Vial>> call, Response<List<Vial>> response) {
                 vialsByVaccine = (ArrayList<Vial>) response.body();
-                checkQuantity();
+
+                if(slot != null){
+                    deleteSlot();
+                }
+                else{
+                    checkQuantity();
+                }
+
             }
 
             @Override
@@ -438,7 +444,7 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        if(endTime.getTime()<startTime.getTime()){
+        if(endTime.getTime() > startTime.getTime()){
             apiService.createSlot(new Slot(startTime, endTime, 0, nbDose)).enqueue(new Callback<Slot>() {
                 @Override
                 public void onResponse(Call<Slot> call, Response<Slot> response) {
@@ -481,19 +487,58 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
     }
 
     private void deleteSlot(){
-        APIService apiService = RetrofitHttpUtilis.getRetrofitInstance().create(APIService.class);
-        apiService.deleteSlot(slot.getId()).enqueue(new Callback<Slot>() {
-            @Override
-            public void onResponse(Call<Slot> call, Response<Slot> response) {
+        if(checkDates() && checkQuantityToDelete()){
+            APIService apiService = RetrofitHttpUtilis.getRetrofitInstance().create(APIService.class);
+            apiService.deleteSlot(slot.getId()).enqueue(new Callback<Slot>() {
+                @Override
+                public void onResponse(Call<Slot> call, Response<Slot> response) {
 
-                getGoodVaccine();
-            }
+                    addSlot(Integer.parseInt(nbDose.getText().toString()));
+                }
 
-            @Override
-            public void onFailure(Call<Slot> call, Throwable t) {
-                Log.w("TAGI", t.getMessage());
-            }
-        });
+                @Override
+                public void onFailure(Call<Slot> call, Throwable t) {
+                    Log.w("TAGI", t.getMessage());
+                }
+            });
+
+        }
+        else{
+            Toast.makeText(this, "Erreur : Il n'y a soit pas assez de vaccins disponible ou alors il n'y a pas assez de doses de vaccins", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private Boolean checkDates(){
+        Date startTime = null;
+        Date endTime = null;
+        try {
+            startTime = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse(String.valueOf(heureDebut.getText()));
+            endTime = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse(String.valueOf(heureFin.getText()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if( endTime.getTime()  > startTime.getTime() ){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    private Boolean checkQuantityToDelete() {
+        //TODO prendre en compte la quantité vaccins déjà attribué
+        int i = 0;
+        for (Vial vial : vialsByVaccine) {
+            i += vial.getShotNumber();
+        }
+
+
+        if (i >= Integer.parseInt(nbDose.getText().toString())) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 }
 
