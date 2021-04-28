@@ -10,13 +10,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitHttpUtilis {
 
     private static Retrofit retrofit;
-    private static final String BASE_URL = "http://192.168.0.15:3000/";
+    private static final String BASE_URL = "http://192.168.0.22:3000/";
 
     public static Retrofit getRetrofitInstance() {
         if (retrofit == null) {
 
             GsonBuilder builder = new GsonBuilder();
-            builder.excludeFieldsWithoutExposeAnnotation();
+            builder.excludeFieldsWithoutExposeAnnotation().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
             Gson gson = builder.create();
 
             retrofit = new retrofit2.Retrofit.Builder()
