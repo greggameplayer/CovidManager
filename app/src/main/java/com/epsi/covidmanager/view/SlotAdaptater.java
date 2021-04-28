@@ -29,10 +29,6 @@ public class SlotAdaptater extends RecyclerView.Adapter<SlotAdaptater.ViewHolder
         this.slots = slots;
         this.onSlotListener = onSlotLister;
         this.vials = vials;
-
-        for(Slot slot : slots){
-            Log.w("TAGI", slot.getDates() + "");
-        }
     }
 
 
