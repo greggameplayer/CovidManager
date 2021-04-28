@@ -30,7 +30,7 @@ public class Slot implements Serializable {
 
     @SerializedName("idSlot")
     @Expose
-    private int idSlot;
+    private Integer idSlot;
 
     @SerializedName("startTime")
     @Expose
@@ -48,7 +48,7 @@ public class Slot implements Serializable {
     @Expose
     private int nbInitialPlaces;
 
-    public Slot(int _id, Date startTime, Date endTime, int nbReservedPlaces, int nbInitialPlaces) {
+    public Slot(Integer _id, Date startTime, Date endTime, int nbReservedPlaces, int nbInitialPlaces) {
         this.startTime = startTime;
         this.nbInitialPlaces = nbInitialPlaces;
         this.endTime = endTime;
@@ -96,7 +96,7 @@ public class Slot implements Serializable {
     Getter
      */
 
-    public int getId() {
+    public Integer getId() {
         return idSlot;
     }
 

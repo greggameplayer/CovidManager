@@ -120,12 +120,6 @@ public class formAddVaccine extends AppCompatActivity implements View.OnClickLis
                 public void onResponse(Call<Vial> call, Response<Vial> response) {
                     //Ajouter la vérification du code 200
 
-                    try {
-                        Log.w("TAGI", response.errorBody().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
                     if(j==nbVial){
                         Log.w("TAGI", "end");
                         onReturnDashboard();

@@ -405,9 +405,6 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
 
     private void onReturn() {
         Intent intent = new Intent(this, DashBoardActivity.class);
-        intent.putExtra("vaccines", vaccines);
-        intent.putExtra("slots", slots);
-        intent.putExtra("vials", vials);
         startActivity(intent);
     }
 

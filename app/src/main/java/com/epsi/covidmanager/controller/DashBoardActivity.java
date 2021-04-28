@@ -24,13 +24,21 @@ import com.epsi.covidmanager.model.beans.Slot;
 import com.epsi.covidmanager.model.beans.Vaccine;
 import com.epsi.covidmanager.model.beans.Vial;
 import com.epsi.covidmanager.R;
+import com.epsi.covidmanager.model.webservice.APIService;
+import com.epsi.covidmanager.model.webservice.RetrofitHttpUtilis;
 import com.epsi.covidmanager.view.SlotAdaptater;
+import com.epsi.covidmanager.view.VaccineAdaptater;
 import com.google.android.material.navigation.NavigationView;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DashBoardActivity extends AppCompatActivity implements SlotAdaptater.OnSlotListener, View.OnClickListener {
     //Composoants graphiques
@@ -52,10 +60,12 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
     private DrawerLayout drawerLayout;
     private LinearLayout ly_alert_vaccins_quantity;
     private TextView id_alert_vaccin_names;
+    private DashBoardActivity context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = this;
         setContentView(R.layout.dashboard);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -76,41 +86,37 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
         // On synchronise.
         drawerToggle.syncState();
 
-        vaccines = (ArrayList<Vaccine>) getIntent().getSerializableExtra("vaccines");
-        slots = (ArrayList<Slot>) getIntent().getSerializableExtra("slots");
-        vials = (ArrayList<Vial>) getIntent().getSerializableExtra("vials");
-
-        for (Vial vial : vials) {
-            if (vial.getSlot() != null) {
-                displayedVials.add(vial);
-                for (Slot slot : slots) {
-                    if (vial.getSlot().getId() == slot.getId()) {
-                        IDdisplayedSlots.add(vial.getSlot().getId());
-                        break;
-                    }
-                }
-            }
-        }
-
-        for (Slot slot : slots){
-            for (Integer IDslot: IDdisplayedSlots) {
-                if(IDslot == slot.getId()){
-                    displayedSlots.add(slot);
-                    break;
-                }
-            }
-        }
+        loadVaccines();
 
 
-        Logger.addLogAdapter(new AndroidLogAdapter());
-        Log.d("vaccines", vaccines.toString());
-        Log.d("vials", vials.toString());
-        Log.d("slots", slots.toString());
+        //for (Vial vial : vials) {
+        //    if (vial.getSlot() != null) {
+        //        displayedVials.add(vial);
+        //        for (Slot slot : slots) {
+        //            if (vial.getSlot().getId() == slot.getId()) {
+        //                IDdisplayedSlots.add(vial.getSlot().getId());
+        //                break;
+        //            }
+        //        }
+        //    }
+        //}
+//
+        //for (Slot slot : slots){
+        //    for (Integer IDslot: IDdisplayedSlots) {
+        //        if(IDslot == slot.getId()){
+        //            displayedSlots.add(slot);
+        //            break;
+        //        }
+        //    }
+        //}
+
+
+
         rv_card_slot = findViewById(R.id.rv_card_slot);
         bt_add_slot = findViewById(R.id.bt_add_slot);
         ly_alert_vaccins_quantity = findViewById(R.id.ly_alert_vaccins_quantity);
         id_alert_vaccin_names = findViewById(R.id.id_alert_vaccin_names);
-        checkVaccinesQuantity();
+
 
         bt_add_slot.setOnClickListener(this);
 
@@ -132,9 +138,68 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
 
         slotDashboard.setChecked(true);
 
-        slotAdaptater = new SlotAdaptater(displayedSlots, displayedVials, this);
-        rv_card_slot.setLayoutManager(new LinearLayoutManager(this));
-        rv_card_slot.setAdapter(slotAdaptater);
+
+    }
+
+    public void loadVaccines(){
+        APIService apiService = RetrofitHttpUtilis.getRetrofitInstance().create(APIService.class);
+
+        apiService.getVaccines().enqueue(new Callback<List<Vaccine>>() {
+            @Override
+            public void onResponse(Call<List<Vaccine>> call, Response<List<Vaccine>> response) {
+                vaccines = (ArrayList<Vaccine>) response.body();
+                loadVials();
+
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Vaccine>> call, Throwable t) {
+                Log.w("TAGI", t.getMessage());
+            }
+        });
+    }
+
+    public void loadVials(){
+
+        APIService apiService = RetrofitHttpUtilis.getRetrofitInstance().create(APIService.class);
+
+        apiService.getVials().enqueue(new Callback<List<Vial>>() {
+            @Override
+            public void onResponse(Call<List<Vial>> call, Response<List<Vial>> response) {
+                vials = (ArrayList<Vial>) response.body();
+                loadSlot();
+
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Vial>> call, Throwable t) {
+                Log.w("TAGI", t.getMessage());
+            }
+        });
+    }
+
+
+
+    public void loadSlot(){
+        APIService apiService = RetrofitHttpUtilis.getRetrofitInstance().create(APIService.class);
+        apiService.getSlots().enqueue(new Callback<List<Slot>>() {
+            @Override
+            public void onResponse(Call<List<Slot>> call, Response<List<Slot>> response) {
+                slots = (ArrayList<Slot>) response.body();
+                slotAdaptater = new SlotAdaptater(slots, vials, context);
+                rv_card_slot.setLayoutManager(new LinearLayoutManager(context));
+                rv_card_slot.setAdapter(slotAdaptater);
+
+                checkVaccinesQuantity();
+            }
+
+            @Override
+            public void onFailure(Call<List<Slot>> call, Throwable t) {
+                Log.w("TAGI", t.getMessage());
+            }
+        });
     }
 
     @SuppressLint("RtlHardcoded")

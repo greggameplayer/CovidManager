@@ -4,13 +4,11 @@ import com.epsi.covidmanager.model.beans.Slot;
 import com.epsi.covidmanager.model.beans.Vaccine;
 import com.epsi.covidmanager.model.beans.Vial;
 
-import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
-import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
@@ -29,10 +27,10 @@ public interface APIService{
     Call<List<Slot>> getSlots();
 
     @POST("slots")
-    Call<Slot> createSlot(@Field("startTime")Date startTime, @Field("endTime") Date endTime, @Field("nbInitialPlaces") int nbInitialPlaces, @Field("nbReservedPlaces") int nbReservedPlaces);
+    Call<Slot> createSlot(@Body Slot slot);
 
     @PATCH("slots/{idSlot}")
-    Call<Slot> updateSlot(@Path("idSlot") int idSlot,@Field("startTime")Date startTime, @Field("endTime") Date endTime, @Field("nbInitialPlaces") int nbInitialPlaces, @Field("nbReservedPlaces") int nbReservedPlaces);
+    Call<Slot> updateSlot(@Path("idSlot") int idSlot,@Body Slot slot);
 
     @DELETE("slots/{idSlot}")
     Call<Slot> deleteSlot(@Path("idSlot") int idSlot);
@@ -49,6 +47,6 @@ public interface APIService{
     Call<Vial> createVial(@Body Vial vial);
 
     @PATCH("vials/{idVial}")
-    Call<Vial> updateVial(@Path("idVial") int idVial, @Field("shotNumber")int shotNumber, @Field("idVaccine") int idVaccine, @Field("idSlot") int idSlot);
+    Call<Vial> updateVial(@Path("idVial") int idVial, @Body Vial vial);
 
 }

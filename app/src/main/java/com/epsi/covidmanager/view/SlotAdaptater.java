@@ -29,6 +29,10 @@ public class SlotAdaptater extends RecyclerView.Adapter<SlotAdaptater.ViewHolder
         this.slots = slots;
         this.onSlotListener = onSlotLister;
         this.vials = vials;
+
+        for(Slot slot : slots){
+            Log.w("TAGI", slot.getDates() + "");
+        }
     }
 
 
@@ -51,10 +55,16 @@ public class SlotAdaptater extends RecyclerView.Adapter<SlotAdaptater.ViewHolder
         holder.tv_doses_restantes.setText(Integer.toString(slot.getNbInitialPlaces() - slot.getNbReservedPlaces()));
 
         for (Vial vial: vials) {
-            if (vial.getSlot().getId() == slot.getId()){
-                holder.tv_vaccin.setText(vial.getVaccine().getName());
-                break;
+            try{
+                if (vial.getSlot().getId() == slot.getId()){
+                    holder.tv_vaccin.setText(vial.getVaccine().getName());
+                    break;
+                }
             }
+            catch (Exception e){
+                Log.w("TAGI", e.getMessage());
+            }
+
         }
 
         slot.slotDuration();
