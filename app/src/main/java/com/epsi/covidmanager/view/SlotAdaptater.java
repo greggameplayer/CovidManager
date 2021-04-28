@@ -44,16 +44,14 @@ public class SlotAdaptater extends RecyclerView.Adapter<SlotAdaptater.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         final Slot slot = slots.get(position);
-
-        Log.w("slot", slot.getStartTime().toString());
         holder.tv_slot_date.setText(slot.getDates());
-        holder.tv_nb_doses.setText(Integer.toString(slot.getNbInitialPlaces()));
-        holder.tv_doses_restantes.setText(Integer.toString(slot.getNbInitialPlaces() - slot.getNbReservedPlaces()));
+        holder.tv_nb_doses.setText(holder.tv_nb_doses.getText() + Integer.toString(slot.getNbInitialPlaces()));
+        holder.tv_doses_restantes.setText(holder.tv_doses_restantes.getText() + Integer.toString(slot.getNbInitialPlaces() - slot.getNbReservedPlaces()));
 
         for (Vial vial: vials) {
             try{
                 if (vial.getSlot().getId() == slot.getId()){
-                    holder.tv_vaccin.setText(vial.getVaccine().getName());
+                    holder.tv_vaccin.setText(holder.tv_vaccin.getText() + vial.getVaccine().getName());
                     break;
                 }
             }
