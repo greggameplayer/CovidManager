@@ -2,6 +2,7 @@ package com.epsi.covidmanager.controller;
 
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -22,9 +23,11 @@ import com.epsi.covidmanager.model.beans.Vaccine;
 import com.epsi.covidmanager.model.beans.Vial;
 import com.epsi.covidmanager.model.webservice.APIService;
 import com.epsi.covidmanager.model.webservice.RetrofitHttpUtilis;
+import com.epsi.covidmanager.view.VaccineAdaptater;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,6 +47,8 @@ public class DetailsSlot extends AppCompatActivity implements View.OnClickListen
     //Donnees
     private ArrayList<Slot> slots;
     private ArrayList<Vial> vials;
+    private ArrayList<Vaccine> vaccines;
+
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -55,6 +60,8 @@ public class DetailsSlot extends AppCompatActivity implements View.OnClickListen
 
         slots = (ArrayList<Slot>) getIntent().getSerializableExtra("slots");
         vials = (ArrayList<Vial>) getIntent().getSerializableExtra("vials");
+
+        loadVaccines();
 
         slot = (Slot) getIntent().getExtras().getSerializable(SLOT_KEY);
         nbPlacesReserved = slot.getNbReservedPlaces();
@@ -163,10 +170,10 @@ public class DetailsSlot extends AppCompatActivity implements View.OnClickListen
         }
         else if (v == bt_modifier){
             Intent intent = new Intent(this, formAddAndModifySlot.class);
-            //intent.putExtra("slot", slot);
-            //intent.putExtra("vaccines", vaccines);
-            //intent.putExtra("slots", slots);
-            //intent.putExtra("vials", vials);
+            intent.putExtra("slot", slot);
+            intent.putExtra("vaccines", vaccines);
+            intent.putExtra("slots", slots);
+            intent.putExtra("vials", vials);
 
             startActivity(intent);
         }
@@ -218,5 +225,23 @@ public class DetailsSlot extends AppCompatActivity implements View.OnClickListen
         else{
             Toast.makeText(context, "Une erreur s'est produite, veillez réessayer", Toast.LENGTH_SHORT).show();
         }
+    }
+
+
+    public void loadVaccines(){
+
+        APIService apiService = RetrofitHttpUtilis.getRetrofitInstance().create(APIService.class);
+
+        apiService.getVaccines().enqueue(new Callback<List<Vaccine>>() {
+            @Override
+            public void onResponse(Call<List<Vaccine>> call, Response<List<Vaccine>> response) {
+                vaccines = (ArrayList<Vaccine>) response.body();
+            }
+
+            @Override
+            public void onFailure(Call<List<Vaccine>> call, Throwable t) {
+                Log.w("TAGI", t.getMessage());
+            }
+        });
     }
 }

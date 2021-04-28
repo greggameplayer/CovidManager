@@ -58,6 +58,10 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         vaccines = (ArrayList<Vaccine>) getIntent().getSerializableExtra("vaccines");
         vials = (ArrayList<Vial>) getIntent().getSerializableExtra("vials");
 
+
+        slot = (Slot) getIntent().getSerializableExtra("slot");
+
+
         ArrayList<String> tabNameVaccines = new ArrayList<>();
 
         for (Vaccine vaccine : vaccines) {
@@ -89,7 +93,7 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         bt_retour = findViewById(R.id.bt_retour1);
         dateFormat = new SimpleDateFormat("d/MM/YYYY hh:mm");
 
-        slot = (Slot) getIntent().getSerializableExtra("slot");
+
 
         int position = 0;
         if (slot != null) {
@@ -367,16 +371,25 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         //onReturn();
         //
         if (v == bt_valider) {
-            Log.w("TAGI", "tt");
-            for (Vaccine vaccine : vaccines) {
-                if (vaccine.getName().equals(vaccin)) {
-                    getVialsByIdVaccineWithSlotNotNull(vaccine.getId());
-                }
+            if(slot != null){
+                deleteSlot();
             }
+            else {
+                getGoodVaccine();
+            }
+
         } else if (v == bt_retour) {
             onReturn();
         }
+    }
 
+    private void getGoodVaccine(){
+        for (Vaccine vaccine : vaccines) {
+            if (vaccine.getName().equals(vaccin)) {
+
+                getVialsByIdVaccineWithSlotNotNull(vaccine.getId());
+            }
+        }
     }
 
 
@@ -418,23 +431,29 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         APIService apiService = RetrofitHttpUtilis.getRetrofitInstance().create(APIService.class);
         Date startTime = null;
         Date endTime = null;
+
         try {
             startTime = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse(String.valueOf(heureDebut.getText()));
             endTime = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse(String.valueOf(heureFin.getText()));
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        apiService.createSlot(new Slot(startTime, endTime, 0, nbDose)).enqueue(new Callback<Slot>() {
-            @Override
-            public void onResponse(Call<Slot> call, Response<Slot> response) {
-                attributeVialsToSlot(nbDose, response.body());
-            }
+        if(endTime.getTime()<startTime.getTime()){
+            apiService.createSlot(new Slot(startTime, endTime, 0, nbDose)).enqueue(new Callback<Slot>() {
+                @Override
+                public void onResponse(Call<Slot> call, Response<Slot> response) {
+                    attributeVialsToSlot(nbDose, response.body());
+                }
 
-            @Override
-            public void onFailure(Call<Slot> call, Throwable t) {
-                Log.w("TAGI", t.getMessage());
-            }
-        });
+                @Override
+                public void onFailure(Call<Slot> call, Throwable t) {
+                    Log.w("TAGI", t.getMessage());
+                }
+            });
+        }
+        else {
+            Toast.makeText(this, "Problème de dates ! ", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void attributeVialsToSlot(int nbDose, Slot newSlot) {
@@ -459,6 +478,22 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
             }
             i += vial.getShotNumber();
         }
+    }
+
+    private void deleteSlot(){
+        APIService apiService = RetrofitHttpUtilis.getRetrofitInstance().create(APIService.class);
+        apiService.deleteSlot(slot.getId()).enqueue(new Callback<Slot>() {
+            @Override
+            public void onResponse(Call<Slot> call, Response<Slot> response) {
+
+                getGoodVaccine();
+            }
+
+            @Override
+            public void onFailure(Call<Slot> call, Throwable t) {
+                Log.w("TAGI", t.getMessage());
+            }
+        });
     }
 }
 

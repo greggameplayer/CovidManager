@@ -50,12 +50,6 @@
                         android:layout_weight="0"
                         android:text="Doses restantes : " />
 
-                    <TextView
-                        android:id="@+id/tv_card_vaccine_nb"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0" />
-
                 </LinearLayout>
 
                 <LinearLayout
@@ -71,12 +65,6 @@
                         android:layout_weight="0"
                         android:text="Doses (tout temps) : " />
 
-                    <TextView
-                        android:id="@+id/tv_vaccin"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0"
-                        android:text="TextView" />
                 </LinearLayout>
             </LinearLayout>
 

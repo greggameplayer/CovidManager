@@ -115,8 +115,6 @@ public class VaccineDashboard extends AppCompatActivity implements VaccineAdapta
             @Override
             public void onResponse(Call<List<Vial>> call, Response<List<Vial>> response) {
                 vials = (ArrayList<Vial>) response.body();
-
-
                 loadVaccines();
             }
 

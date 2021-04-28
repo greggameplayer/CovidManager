@@ -45,8 +45,8 @@ public class VaccineAdaptater extends RecyclerView.Adapter<VaccineAdaptater.View
         final Vaccine vaccine = vaccines.get(position);
 
         holder.tv_card_vaccine_name.setText(vaccine.getName());
-        holder.tv_card_vaccine_nb.setText(quantityRemainToAllow(vaccine) + "");
-        holder.tv_card_vaccine_nb_prev.setText(quantityAllTime(vaccine) + "");
+        holder.tv_card_vaccine_nb.setText( holder.tv_card_vaccine_nb.getText() +" " + quantityRemainToAllow(vaccine) );
+        holder.tv_card_vaccine_nb_prev.setText(holder.tv_card_vaccine_nb_prev.getText() + " " +quantityAllTime(vaccine));
 
 
         holder.root.setOnClickListener(new View.OnClickListener() {
