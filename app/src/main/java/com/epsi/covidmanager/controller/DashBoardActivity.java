@@ -164,7 +164,7 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
             if(vial.getSlot() != null){
                 for(Slot slot : slots)
                 {
-                    if(slot.getId() == vial.getSlot().getId()){
+                    if(slot.getId().equals(vial.getSlot().getId())){
                         mustBeAdded = false;
                         break;
                     }
@@ -203,6 +203,8 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
     @Override
     public void onClick(View v) {
         Intent intent = new Intent(this, formAddAndModifySlot.class);
+        intent.putExtra("vaccines", vaccines);
+        intent.putExtra("vials", vials);
         startActivity(intent);
     }
 

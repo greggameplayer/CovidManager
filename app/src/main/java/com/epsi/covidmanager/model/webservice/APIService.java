@@ -43,6 +43,9 @@ public interface APIService{
     @GET("vials?filter[include][0]=vaccine&filter[include][1]=slot")
     Call<List<Vial>> getVials();
 
+    @GET("vials/byvaccine/{idVaccine}")
+    Call<List<Vial>> getVialsByVaccineIdNotNull(@Path("idVaccine") int idVaccine);
+
     @POST("vials")
     Call<Vial> createVial(@Body Vial vial);
 

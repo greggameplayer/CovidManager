@@ -143,24 +143,18 @@ public class DetailsSlot extends AppCompatActivity implements View.OnClickListen
             for (Slot slot1 : slots) {
                 if (slot1.getId().equals(slot.getId())) {
                     //TODO: revoir format startTime et endTime coté API ou voir pour une convertion en String avant d'envoie
-
+                    slot1.setNbReservedPlaces(nbPlacesReserved);
                     APIService apiService = RetrofitHttpUtilis.getRetrofitInstance().create(APIService.class);
-
                     apiService.updateSlot(slot1.getId(), slot1).enqueue(new Callback<Slot>() {
                         @Override
                         public void onResponse(Call<Slot> call, Response<Slot> response) {
-                            try {
-                                Log.w("TAGI", response.errorBody().string());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
                             Intent DashBoardActivity = new Intent(context, DashBoardActivity.class);
                             startActivity(DashBoardActivity);
                         }
 
                         @Override
                         public void onFailure(Call<Slot> call, Throwable t) {
-                            Log.w("TAGI", t);
+                            Log.w("TAGI", t.getMessage());
                         }
                     });
                     break;

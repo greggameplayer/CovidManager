@@ -32,11 +32,11 @@ public class Slot implements Serializable {
 
     @SerializedName("nbReservedPlaces")
     @Expose
-    private int nbReservedPlaces;
+    private Integer nbReservedPlaces;
 
     @SerializedName("nbInitialPlaces")
     @Expose
-    private int nbInitialPlaces;
+    private Integer nbInitialPlaces;
 
     public Slot(Integer _id, Date startTime, Date endTime, int nbReservedPlaces, int nbInitialPlaces) {
         this.startTime = startTime;
@@ -104,6 +104,22 @@ public class Slot implements Serializable {
 
     public int getNbReservedPlaces() {
         return nbReservedPlaces;
+    }
+
+    public void setNbReservedPlaces(Integer nbReservedPlaces) {
+        this.nbReservedPlaces = nbReservedPlaces;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setNbInitialPlaces(Integer nbInitialPlaces) {
+        this.nbInitialPlaces = nbInitialPlaces;
     }
 
     public String getDates(){

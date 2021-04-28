@@ -75,7 +75,11 @@ public class Vial implements Serializable {
         return slot;
     }
 
+    public void setSlot(Slot slot) {
+        this.slot = slot;
+    }
 
-
-
+    public void setIdSlot(Integer idSlot) {
+        this.idSlot = idSlot;
+    }
 }
