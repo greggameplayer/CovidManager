@@ -94,7 +94,6 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         bt_retour = findViewById(R.id.bt_retour1);
 
 
-
         int position = 0;
         if (slot != null) {
             for (Vial vial : vials) {
@@ -385,7 +384,7 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         startActivity(intent);
     }
 
-    private void getGoodVaccine(){
+    private void getGoodVaccine() {
         for (Vaccine vaccine : vaccines) {
             if (vaccine.getName().equals(vaccin)) {
 
@@ -395,8 +394,6 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
     }
 
 
-
-
     private void getVialsByIdVaccineWithSlotNotNull(int IdVaccine) {
         APIService apiService = RetrofitHttpUtilis.getRetrofitInstance().create(APIService.class);
         apiService.getVialsByVaccineIdNotNull(IdVaccine).enqueue(new Callback<List<Vial>>() {
@@ -404,10 +401,9 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
             public void onResponse(Call<List<Vial>> call, Response<List<Vial>> response) {
                 vialsByVaccine = (ArrayList<Vial>) response.body();
 
-                if(slot != null){
+                if (slot != null) {
                     deleteSlot();
-                }
-                else{
+                } else {
                     checkQuantity();
                 }
 
@@ -444,7 +440,7 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        if(endTime.getTime() > startTime.getTime()){
+        if (endTime.getTime() > startTime.getTime()) {
             apiService.createSlot(new Slot(startTime, endTime, 0, nbDose)).enqueue(new Callback<Slot>() {
                 @Override
                 public void onResponse(Call<Slot> call, Response<Slot> response) {
@@ -456,9 +452,8 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
                     Log.w("TAGI1", t.getMessage());
                 }
             });
-        }
-        else {
-            Toast.makeText(this, "Problème de dates ! ", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "La date de fin ne peut pas être avant la date de début", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -481,18 +476,17 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
                         Log.w("TAGI2", t.getMessage());
                     }
                 });
+                i += vial.getShotNumber();
             }
-            i += vial.getShotNumber();
         }
     }
 
-    private void deleteSlot(){
-        if(checkDates() && checkQuantityToDelete()){
+    private void deleteSlot() {
+        if (checkDates() && checkQuantityToDelete()) {
             APIService apiService = RetrofitHttpUtilis.getRetrofitInstance().create(APIService.class);
             apiService.deleteSlot(slot.getId()).enqueue(new Callback<Slot>() {
                 @Override
                 public void onResponse(Call<Slot> call, Response<Slot> response) {
-
                     addSlot(Integer.parseInt(nbDose.getText().toString()));
                 }
 
@@ -502,14 +496,13 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
                 }
             });
 
-        }
-        else{
-            Toast.makeText(this, "Erreur : Il n'y a soit pas assez de vaccins disponible ou alors il n'y a pas assez de doses de vaccins", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Il n'y a pas assez de doses disponible pour le vaccin " + vaccin + ".", Toast.LENGTH_SHORT).show();
         }
 
     }
 
-    private Boolean checkDates(){
+    private Boolean checkDates() {
         Date startTime = null;
         Date endTime = null;
         try {
@@ -518,9 +511,9 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        if( endTime.getTime()  > startTime.getTime() ){
+        if (endTime.getTime() > startTime.getTime()) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -531,7 +524,9 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         for (Vial vial : vialsByVaccine) {
             i += vial.getShotNumber();
         }
-        i+= slot.getNbInitialPlaces();
+        if (oldVaccin.equals(vaccin)){
+            i += slot.getNbInitialPlaces();
+        }
 
 
         if (i >= Integer.parseInt(nbDose.getText().toString())) {

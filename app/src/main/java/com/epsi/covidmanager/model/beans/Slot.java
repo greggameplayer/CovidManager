@@ -159,9 +159,14 @@ public class Slot implements Serializable {
         if(formaterDMY.format(this.getStartTime()).equals(formaterDMY.format(this.getEndTime()))) {
             date = formaterDMY.format(this.getStartTime())+ "   ";
             if (formaterTestAMPM.format(this.getStartTime()).equals("AM")) {
-                date += formaterHMAM.format(this.getStartTime());
+                date += formaterHMAM.format(this.getStartTime()) +" ";
             } else {
-                date += formaterHMPM.format(this.getStartTime());
+                date += formaterHMPM.format(this.getStartTime()) +" ";
+            }
+            if (formaterTestAMPM.format(this.getEndTime()).equals("AM")) {
+                date += formaterHMAM.format(this.getEndTime());
+            } else {
+                date += formaterHMPM.format(this.getEndTime());
             }
         }
         else {

@@ -49,16 +49,10 @@ public class SlotAdaptater extends RecyclerView.Adapter<SlotAdaptater.ViewHolder
         holder.tv_doses_restantes.setText(holder.tv_doses_restantes.getText() + Integer.toString(slot.getNbInitialPlaces() - slot.getNbReservedPlaces()));
 
         for (Vial vial: vials) {
-            try{
-                if (vial.getSlot().getId() == slot.getId()){
-                    holder.tv_vaccin.setText(holder.tv_vaccin.getText() + vial.getVaccine().getName());
-                    break;
-                }
+            if (vial.getSlot()!= null && vial.getSlot().getId().equals(slot.getId())){
+                holder.tv_vaccin.setText(holder.tv_vaccin.getText() + vial.getVaccine().getName());
+                break;
             }
-            catch (Exception e){
-                Log.w("TAGI", e.getMessage());
-            }
-
         }
 
         slot.slotDuration();

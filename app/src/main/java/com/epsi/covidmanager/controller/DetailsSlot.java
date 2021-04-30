@@ -118,6 +118,7 @@ public class DetailsSlot extends AppCompatActivity implements View.OnClickListen
     @SuppressLint("SetTextI18n")
     @Override
     public void onClick(View v) {
+        final boolean[] realase = {true};
         if(v == bt_less){
             nbPlacesReserved--;
             if (nbPlacesReserved == slot.getNbReservedPlaces()) {
@@ -149,7 +150,6 @@ public class DetailsSlot extends AppCompatActivity implements View.OnClickListen
         else if(v == bt_valider){
             for (Slot slot1 : slots) {
                 if (slot1.getId().equals(slot.getId())) {
-                    //TODO: revoir format startTime et endTime coté API ou voir pour une convertion en String avant d'envoie
                     slot1.setNbReservedPlaces(nbPlacesReserved);
                     APIService apiService = RetrofitHttpUtilis.getRetrofitInstance().create(APIService.class);
                     apiService.updateSlot(slot1.getId(), slot1).enqueue(new Callback<Slot>() {
@@ -193,16 +193,19 @@ public class DetailsSlot extends AppCompatActivity implements View.OnClickListen
                                             apiService.deleteSlot(slot1.getId()).enqueue(new Callback<Slot>() {
                                                 @Override
                                                 public void onResponse(Call<Slot> call, Response<Slot> response) {
-                                                    Intent DashBoardActivity = new Intent(context, DashBoardActivity.class);
-                                                    startActivity(DashBoardActivity);
                                                 }
 
                                                 @Override
                                                 public void onFailure(Call<Slot> call, Throwable t) {
                                                     Log.w("TAGI", t.getMessage());
+                                                    realase[0] = false;
                                                 }
                                             });
                                         }
+                                    }
+                                    if (realase[0]){
+                                        Intent DashBoardActivity = new Intent(context, DashBoardActivity.class);
+                                        startActivity(DashBoardActivity);
                                     }
                                     break;
                                 }
