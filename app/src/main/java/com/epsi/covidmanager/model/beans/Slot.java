@@ -1,6 +1,8 @@
 package com.epsi.covidmanager.model.beans;
 
 
+import android.util.Log;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.orhanobut.logger.AndroidLogAdapter;
@@ -16,7 +18,6 @@ import java.util.Date;
 
 public class Slot implements Serializable {
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
-
 
     @SerializedName("idSlot")
     @Expose
@@ -122,14 +123,51 @@ public class Slot implements Serializable {
         this.nbInitialPlaces = nbInitialPlaces;
     }
 
-    public String getDates(){
-        SimpleDateFormat formaterFull = new SimpleDateFormat("dd/MM/yyyy hh:mm");
-        SimpleDateFormat formaterDMY = new SimpleDateFormat("dd/MM/yyyy");
-        SimpleDateFormat formaterHM = new SimpleDateFormat("hh:mm");
-        String date = formaterDMY.format(this.getStartTime())+ "   " + formaterHM.format(this.getStartTime()) + " - " + formaterHM.format(this.getEndTime());
-        if (!formaterDMY.format(this.getStartTime()).equals(formaterDMY.format(this.getEndTime()))){
-            date = formaterFull.format(this.getStartTime()) +" - "+formaterFull.format(this.getEndTime());
+
+
+    public String getGoodFormatStartTime(){
+        SimpleDateFormat formaterTestAMPM = new SimpleDateFormat("a");
+        SimpleDateFormat formaterFullAM = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+        SimpleDateFormat formaterFullPM = new SimpleDateFormat("dd/MM/yyyy kk:mm");
+        if (formaterTestAMPM.format(this.getStartTime()).equals("AM")){
+            return formaterFullAM.format(this.getStartTime());
         }
-        return (date);
+        else {
+            return formaterFullPM.format(this.getStartTime());
+        }
+    }
+
+    public String getGoodFormatEndTime(){
+
+        SimpleDateFormat formaterTestAMPM = new SimpleDateFormat("a");
+        SimpleDateFormat formaterFullAM = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+        SimpleDateFormat formaterFullPM = new SimpleDateFormat("dd/MM/yyyy kk:mm");
+        if (formaterTestAMPM.format(this.getEndTime()).equals("AM")){
+            return formaterFullAM.format(this.getEndTime());
+        }
+        else {
+            return formaterFullPM.format(this.getEndTime());
+        }
+    }
+
+    public String getDates(){
+        SimpleDateFormat formaterDMY = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat formaterTestAMPM = new SimpleDateFormat("a");
+        SimpleDateFormat formaterHMAM = new SimpleDateFormat("hh:mm");
+        SimpleDateFormat formaterHMPM = new SimpleDateFormat("kk:mm");
+        String date;
+        if(formaterDMY.format(this.getStartTime()).equals(formaterDMY.format(this.getEndTime()))) {
+            date = formaterDMY.format(this.getStartTime())+ "   ";
+            if (formaterTestAMPM.format(this.getStartTime()).equals("AM")) {
+                date += formaterHMAM.format(this.getStartTime());
+            } else {
+                date += formaterHMPM.format(this.getStartTime());
+            }
+        }
+        else {
+            date = getGoodFormatStartTime() + "   ";
+            date += getGoodFormatEndTime();
+        }
+        return date;
     }
 }

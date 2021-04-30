@@ -12,12 +12,12 @@
         android:layout_width="147dp"
         android:layout_height="70dp"
         android:layout_marginStart="1dp"
-        android:layout_marginTop="60dp"
         android:layout_marginEnd="1dp"
+        android:layout_marginBottom="60dp"
         android:contentDescription="@string/img_logo_value"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/logo" />
 
     <LinearLayout
@@ -25,12 +25,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="100dp"
         android:layout_marginEnd="10dp"
+        android:layout_marginBottom="30dp"
         android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/bt_valider"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView">
+        app:layout_constraintStart_toStartOf="parent">
 
         <TextView
             android:id="@+id/textView3"
@@ -59,8 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:hint="Heure de début"
-            android:inputType="datetime" />
+            android:hint="Heure de début" />
 
         <TextView
             android:id="@+id/textView19"
@@ -75,8 +74,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:hint="Heure de fin"
-            android:inputType="datetime" />
+            android:hint="Heure de fin" />
 
         <TextView
             android:id="@+id/textView20"
@@ -97,18 +95,6 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/bt_retour1"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginBottom="15dp"
-        android:text="Retour"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
         android:id="@+id/bt_valider"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -119,6 +105,18 @@
         app:layout_constraintBottom_toTopOf="@+id/bt_retour1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/bt_retour1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="15dp"
+        android:text="Retour"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

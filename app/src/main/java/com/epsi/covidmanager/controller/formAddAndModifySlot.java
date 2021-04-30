@@ -44,7 +44,6 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
     private ArrayList<Vial> vials;
     private ArrayList<Vaccine> vaccines;
     private AwesomeValidation heureValidation = new AwesomeValidation(ValidationStyle.UNDERLABEL);
-    private SimpleDateFormat dateFormat;
     private String oldVaccin;
     private ArrayList<Vial> vialsByVaccine = new ArrayList<>();
 
@@ -93,7 +92,6 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         nbDose = findViewById(R.id.nombreDose);
         bt_valider = findViewById(R.id.bt_valider);
         bt_retour = findViewById(R.id.bt_retour1);
-        dateFormat = new SimpleDateFormat("d/MM/YYYY hh:mm");
 
 
 
@@ -107,8 +105,8 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
             }
             spinnerVaccin.setSelection(position, true);
             nbDose.setText(Integer.toString(slot.getNbInitialPlaces()));
-            heureDebut.setText(dateFormat.format(slot.getStartTime()));
-            heureFin.setText(dateFormat.format(slot.getEndTime()));
+            heureDebut.setText(slot.getGoodFormatStartTime());
+            heureFin.setText(slot.getGoodFormatEndTime());
         }
 
         bt_valider.setOnClickListener(this);
@@ -373,7 +371,9 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         //onReturn();
         //
         if (v == bt_valider) {
+            if (heureValidation.validate()) {
                 getGoodVaccine();
+            }
 
         } else if (v == bt_retour) {
             onReturn();
@@ -453,7 +453,7 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
 
                 @Override
                 public void onFailure(Call<Slot> call, Throwable t) {
-                    Log.w("TAGI", t.getMessage());
+                    Log.w("TAGI1", t.getMessage());
                 }
             });
         }
@@ -478,7 +478,7 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
 
                     @Override
                     public void onFailure(Call<Vial> call, Throwable t) {
-                        Log.w("TAGI", t.getMessage());
+                        Log.w("TAGI2", t.getMessage());
                     }
                 });
             }
@@ -498,7 +498,7 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
 
                 @Override
                 public void onFailure(Call<Slot> call, Throwable t) {
-                    Log.w("TAGI", t.getMessage());
+                    Log.w("TAGI3", t.getMessage());
                 }
             });
 
@@ -531,6 +531,7 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         for (Vial vial : vialsByVaccine) {
             i += vial.getShotNumber();
         }
+        i+= slot.getNbInitialPlaces();
 
 
         if (i >= Integer.parseInt(nbDose.getText().toString())) {
