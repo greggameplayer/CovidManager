@@ -1,8 +1,5 @@
 package com.epsi.covidmanager.model.beans;
 
-
-import android.util.Log;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.orhanobut.logger.AndroidLogAdapter;
@@ -11,9 +8,7 @@ import com.orhanobut.logger.Logger;
 import java.io.Serializable;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
 public class Slot implements Serializable {

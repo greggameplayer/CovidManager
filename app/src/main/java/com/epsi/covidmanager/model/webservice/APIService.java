@@ -13,6 +13,7 @@ import retrofit2.http.GET;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface APIService{
 
@@ -43,8 +44,8 @@ public interface APIService{
     @GET("vials?filter[include][0]=vaccine&filter[include][1]=slot")
     Call<List<Vial>> getVials();
 
-    @GET("vials/byvaccine/{idVaccine}")
-    Call<List<Vial>> getVialsByVaccineIdNotNull(@Path("idVaccine") int idVaccine);
+    @GET("vials?filter[include][0]=vaccine&filter[include][1]=slot")
+    Call<List<Vial>> getVialsByVaccineId(@Query("filter[where][idVaccine]") int idVaccine);
 
     @POST("vials")
     Call<Vial> createVial(@Body Vial vial);

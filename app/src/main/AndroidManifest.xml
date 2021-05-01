@@ -23,44 +23,45 @@
         android:usesCleartextTraffic="true">
 
 
-        <activity android:name=".controller.LoadingScreenActivity">
+        <activity android:name=".controller.LoadingScreenActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.SYNC" />
+
             </intent-filter>
         </activity>
-        <activity android:name=".controller.MainActivity">
+        <activity android:name=".controller.MainActivity" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".controller.DashBoardActivity">
+        <activity android:name=".controller.SlotDashboard" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        <activity android:name=".controller.DetailsSlot">
+        <activity android:name=".controller.DetailsSlot" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        <activity android:name=".controller.VaccineDashboard">
+        <activity android:name=".controller.VaccineDashboard" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        <activity android:name=".controller.DetailsVaccine">
+        <activity android:name=".controller.DetailsVaccine" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        <activity android:name=".controller.formAddVaccine">
+        <activity android:name=".controller.formAddVaccine" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        <activity android:name=".controller.formAddAndModifySlot">
+        <activity android:name=".controller.formAddAndModifySlot" android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>

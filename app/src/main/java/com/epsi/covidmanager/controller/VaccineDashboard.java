@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.epsi.covidmanager.R;
-import com.epsi.covidmanager.model.beans.Slot;
 import com.epsi.covidmanager.model.beans.Vaccine;
 import com.epsi.covidmanager.model.beans.Vial;
 import com.epsi.covidmanager.model.webservice.APIService;
@@ -100,7 +99,7 @@ public class VaccineDashboard extends AppCompatActivity implements VaccineAdapta
         vaccineDashboard.setChecked(true);
 
         slotDashboard = navigationView.getMenu().findItem(R.id.dashboardSlots);
-        Intent slotDashboardIntent = new Intent(this, DashBoardActivity.class);
+        Intent slotDashboardIntent = new Intent(this, SlotDashboard.class);
         slotDashboardIntent.putExtra("vaccines", vaccines);
 
         slotDashboardIntent.putExtra("vials", vials);

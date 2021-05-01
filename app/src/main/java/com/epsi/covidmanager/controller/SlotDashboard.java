@@ -27,22 +27,17 @@ import com.epsi.covidmanager.R;
 import com.epsi.covidmanager.model.webservice.APIService;
 import com.epsi.covidmanager.model.webservice.RetrofitHttpUtilis;
 import com.epsi.covidmanager.view.SlotAdaptater;
-import com.epsi.covidmanager.view.VaccineAdaptater;
 import com.google.android.material.navigation.NavigationView;
-import com.orhanobut.logger.AndroidLogAdapter;
-import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DashBoardActivity extends AppCompatActivity implements SlotAdaptater.OnSlotListener, View.OnClickListener {
+public class SlotDashboard extends AppCompatActivity implements SlotAdaptater.OnSlotListener, View.OnClickListener {
     //Composoants graphiques
     private RecyclerView rv_card_slot;
     private Button bt_add_slot;
@@ -61,7 +56,7 @@ public class DashBoardActivity extends AppCompatActivity implements SlotAdaptate
     private DrawerLayout drawerLayout;
     private LinearLayout ly_alert_vaccins_quantity;
     private TextView id_alert_vaccin_names;
-    private DashBoardActivity context;
+    private SlotDashboard context;
 
 
     @Override

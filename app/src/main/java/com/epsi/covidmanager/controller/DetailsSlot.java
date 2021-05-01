@@ -2,7 +2,6 @@ package com.epsi.covidmanager.controller;
 
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -23,9 +22,6 @@ import com.epsi.covidmanager.model.beans.Vaccine;
 import com.epsi.covidmanager.model.beans.Vial;
 import com.epsi.covidmanager.model.webservice.APIService;
 import com.epsi.covidmanager.model.webservice.RetrofitHttpUtilis;
-import com.epsi.covidmanager.view.VaccineAdaptater;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -155,7 +151,7 @@ public class DetailsSlot extends AppCompatActivity implements View.OnClickListen
                     apiService.updateSlot(slot1.getId(), slot1).enqueue(new Callback<Slot>() {
                         @Override
                         public void onResponse(Call<Slot> call, Response<Slot> response) {
-                            Intent DashBoardActivity = new Intent(context, DashBoardActivity.class);
+                            Intent DashBoardActivity = new Intent(context, SlotDashboard.class);
                             startActivity(DashBoardActivity);
                         }
 
@@ -204,7 +200,7 @@ public class DetailsSlot extends AppCompatActivity implements View.OnClickListen
                                         }
                                     }
                                     if (realase[0]){
-                                        Intent DashBoardActivity = new Intent(context, DashBoardActivity.class);
+                                        Intent DashBoardActivity = new Intent(context, SlotDashboard.class);
                                         startActivity(DashBoardActivity);
                                     }
                                     break;
@@ -222,7 +218,7 @@ public class DetailsSlot extends AppCompatActivity implements View.OnClickListen
             alertDialog.show();
         }
         else if (v == bt_retour) {
-            Intent DashBoardActivity = new Intent(context, DashBoardActivity.class);
+            Intent DashBoardActivity = new Intent(context, SlotDashboard.class);
             startActivity(DashBoardActivity);
         }
         else{
