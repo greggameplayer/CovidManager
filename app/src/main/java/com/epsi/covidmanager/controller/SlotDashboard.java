@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.epsi.covidmanager.model.beans.Slot;
+import com.epsi.covidmanager.model.beans.Token;
 import com.epsi.covidmanager.model.beans.Vaccine;
 import com.epsi.covidmanager.model.beans.Vial;
 import com.epsi.covidmanager.R;
@@ -68,7 +69,7 @@ public class SlotDashboard extends AppCompatActivity implements SlotAdaptater.On
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setTitle("");
-        drawerLayout.setStatusBarBackgroundColor(getResources().getColor(R.color.design_default_color_background, getTheme()));
+        drawerLayout.setStatusBarBackgroundColor(getResources().getColor(R.color.primary, getTheme()));
 
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_opened, R.string.drawer_closed);
 
@@ -114,7 +115,7 @@ public class SlotDashboard extends AppCompatActivity implements SlotAdaptater.On
     public void loadVaccines(){
         APIService apiService = RetrofitHttpUtilis.getRetrofitInstance().create(APIService.class);
 
-        apiService.getVaccines().enqueue(new Callback<List<Vaccine>>() {
+        apiService.getVaccines(Token.getToken()).enqueue(new Callback<List<Vaccine>>() {
             @Override
             public void onResponse(Call<List<Vaccine>> call, Response<List<Vaccine>> response) {
                 vaccines = (ArrayList<Vaccine>) response.body();
@@ -134,7 +135,7 @@ public class SlotDashboard extends AppCompatActivity implements SlotAdaptater.On
 
         APIService apiService = RetrofitHttpUtilis.getRetrofitInstance().create(APIService.class);
 
-        apiService.getVials().enqueue(new Callback<List<Vial>>() {
+        apiService.getVials(Token.getToken()).enqueue(new Callback<List<Vial>>() {
             @Override
             public void onResponse(Call<List<Vial>> call, Response<List<Vial>> response) {
                 vials = (ArrayList<Vial>) response.body();

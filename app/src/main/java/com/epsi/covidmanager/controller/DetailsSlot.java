@@ -18,6 +18,7 @@ import android.content.Intent;
 
 import com.epsi.covidmanager.R;
 import com.epsi.covidmanager.model.beans.Slot;
+import com.epsi.covidmanager.model.beans.Token;
 import com.epsi.covidmanager.model.beans.Vaccine;
 import com.epsi.covidmanager.model.beans.Vial;
 import com.epsi.covidmanager.model.webservice.APIService;
@@ -148,7 +149,7 @@ public class DetailsSlot extends AppCompatActivity implements View.OnClickListen
                 if (slot1.getId().equals(slot.getId())) {
                     slot1.setNbReservedPlaces(nbPlacesReserved);
                     APIService apiService = RetrofitHttpUtilis.getRetrofitInstance().create(APIService.class);
-                    apiService.updateSlot(slot1.getId(), slot1).enqueue(new Callback<Slot>() {
+                    apiService.updateSlot(Token.getToken(), slot1.getId(), slot1).enqueue(new Callback<Slot>() {
                         @Override
                         public void onResponse(Call<Slot> call, Response<Slot> response) {
                             Intent DashBoardActivity = new Intent(context, SlotDashboard.class);
@@ -186,7 +187,7 @@ public class DetailsSlot extends AppCompatActivity implements View.OnClickListen
                                         if (vial.getSlot() != null && vial.getSlot().getId().equals(slot1.getId())) {
                                             APIService apiService = RetrofitHttpUtilis.getRetrofitInstance().create(APIService.class);
 
-                                            apiService.deleteSlot(slot1.getId()).enqueue(new Callback<Slot>() {
+                                            apiService.deleteSlot(Token.getToken(), slot1.getId()).enqueue(new Callback<Slot>() {
                                                 @Override
                                                 public void onResponse(Call<Slot> call, Response<Slot> response) {
                                                 }
@@ -231,7 +232,7 @@ public class DetailsSlot extends AppCompatActivity implements View.OnClickListen
 
         APIService apiService = RetrofitHttpUtilis.getRetrofitInstance().create(APIService.class);
 
-        apiService.getVaccines().enqueue(new Callback<List<Vaccine>>() {
+        apiService.getVaccines(Token.getToken()).enqueue(new Callback<List<Vaccine>>() {
             @Override
             public void onResponse(Call<List<Vaccine>> call, Response<List<Vaccine>> response) {
                 vaccines = (ArrayList<Vaccine>) response.body();

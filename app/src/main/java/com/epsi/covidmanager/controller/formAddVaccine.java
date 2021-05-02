@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.epsi.covidmanager.R;
+import com.epsi.covidmanager.model.beans.Token;
 import com.epsi.covidmanager.model.beans.Vaccine;
 import com.epsi.covidmanager.model.beans.Vial;
 import com.epsi.covidmanager.model.webservice.APIService;
@@ -106,7 +107,7 @@ public class formAddVaccine extends AppCompatActivity implements View.OnClickLis
             APIService apiService = RetrofitHttpUtilis.getRetrofitInstance().create(APIService.class);
 
             int j = i;
-            apiService.createVial(vial).enqueue(new Callback<Vial>() {
+            apiService.createVial(Token.getToken(), vial).enqueue(new Callback<Vial>() {
                 @Override
                 public void onResponse(Call<Vial> call, Response<Vial> response) {
                     //Ajouter la vérification du code 200

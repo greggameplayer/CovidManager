@@ -13,14 +13,12 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
 import com.epsi.covidmanager.R;
 import com.epsi.covidmanager.model.beans.Slot;
+import com.epsi.covidmanager.model.beans.Token;
 import com.epsi.covidmanager.model.beans.Vaccine;
 import com.epsi.covidmanager.model.beans.Vial;
 import com.epsi.covidmanager.model.webservice.APIService;
@@ -31,6 +29,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class formAddAndModifySlot extends AppCompatActivity implements AdapterView.OnItemSelectedListener, View.OnClickListener {
 
@@ -159,7 +161,7 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
 
     private void getVialsByIdVaccine(int IdVaccine) {
         APIService apiService = RetrofitHttpUtilis.getRetrofitInstance().create(APIService.class);
-        apiService.getVialsByVaccineId(IdVaccine).enqueue(new Callback<List<Vial>>() {
+        apiService.getVialsByVaccineId(Token.getToken(), IdVaccine).enqueue(new Callback<List<Vial>>() {
             @Override
             public void onResponse(Call<List<Vial>> call, Response<List<Vial>> response) {
                 vialsByVaccine = (ArrayList<Vial>) response.body();
@@ -209,7 +211,7 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
             e.printStackTrace();
         }
         if (endTime.getTime() > startTime.getTime()) {
-            apiService.createSlot(new Slot(startTime, endTime, 0, nbDose)).enqueue(new Callback<Slot>() {
+            apiService.createSlot(Token.getToken(), new Slot(startTime, endTime, 0, nbDose)).enqueue(new Callback<Slot>() {
                 @Override
                 public void onResponse(Call<Slot> call, Response<Slot> response) {
                     attributeVialsToSlot(nbDose, response.body());
@@ -233,7 +235,7 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
                 APIService apiService = RetrofitHttpUtilis.getRetrofitInstance().create(APIService.class);
                 vial.setSlot(newSlot);
                 vial.setIdSlot(newSlot.getId());
-                apiService.updateVial(vial.getId(), vial).enqueue(new Callback<Vial>() {
+                apiService.updateVial(Token.getToken(), vial.getId(), vial).enqueue(new Callback<Vial>() {
                     @Override
                     public void onResponse(Call<Vial> call, Response<Vial> response) {
                         onReturn();
@@ -252,7 +254,7 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
     private void deleteSlot() {
         if (checkDates() && checkQuantityToDelete()) {
             APIService apiService = RetrofitHttpUtilis.getRetrofitInstance().create(APIService.class);
-            apiService.deleteSlot(slot.getId()).enqueue(new Callback<Slot>() {
+            apiService.deleteSlot(Token.getToken(), slot.getId()).enqueue(new Callback<Slot>() {
                 @Override
                 public void onResponse(Call<Slot> call, Response<Slot> response) {
                     addSlot(Integer.parseInt(nbDose.getText().toString()));
@@ -287,7 +289,6 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
     }
 
     private Boolean checkQuantityToDelete() {
-        //TODO prendre en compte la quantité vaccins déjà attribué
         int i = 0;
         for (Vial vial : vialsByVaccine) {
             i += vial.getShotNumber();
