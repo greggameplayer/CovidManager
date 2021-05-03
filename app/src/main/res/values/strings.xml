@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">CovidManager</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="bt_connect">Connection</string>
+    <string name="img_logo_value">IMG logo covid manage</string>
+    <string name="bt_add_slot">Add Slot</string>
+    <string name="tv_alert_vaccin_quantity">Please note that the number of vaccines is low for :</string>
+    <string name="tv_details_vaccine_quantity_all_time">Quantity (all time) :</string>
+    <string name="tv_details_vaccine_quantity_remain">Quantity (remain to allocate) :</string>
+    <string name="tv_details_vaccine_quantity_prev">Quantity (remain to allocate)</string>
+    <string name="bt_details_vaccine_add_vaccine">Add new vial</string>
+    <string name="tv_form_vaccine_header">Stock Entry : </string>
+    <string name="tv_form_vaccine_nbVial">"Number of Vials : "</string>
+    <string name="tv_form_vaccin_nb_dose">"Number of dose (per vial) : "</string>
+    <string name="bt_form_vaccine_add">Add</string>
+    <string name="bt_form_vaccine_return">Return</string>
+    <string name="bt_details_vaccine_return">Return</string>
+    <string name="drawer_opened">Drawer opened</string>
+    <string name="drawer_closed">Drawer closed</string>
+    <string name="wrong_format">Wrong format !</string>
 </resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/dashboardSlots"
+            android:icon="@drawable/ic_slot"
+            android:title="Tableau de bord créneaux" />
+        <item
+            android:id="@+id/dashboardVaccines"
+            android:icon="@drawable/ic_vaccine"
+            android:title="Tableau de bord vaccins" />
+    </group>
+    <group>
+        <item
+            android:id="@+id/disconnect"
+            android:icon="@drawable/ic_disconnect"
+            android:title="Se déconnecter" />
+    </group>
+</menu>

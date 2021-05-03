@@ -1,14 +1,16 @@
-package com.epsi.covidmanager;
+package com.epsi.covidmanager.controller;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-public class MainActivity extends AppCompatActivity {
+import com.epsi.covidmanager.R;
+
+public class LoadingScreenActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.loading_screen);
     }
 }
