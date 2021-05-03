@@ -2,6 +2,7 @@ package com.epsi.covidmanager;
 
 import android.util.Log;
 
+import com.epsi.covidmanager.model.beans.Token;
 import com.epsi.covidmanager.model.beans.User;
 import com.epsi.covidmanager.model.webservice.APIService;
 import com.epsi.covidmanager.model.webservice.RetrofitHttpUtilis;

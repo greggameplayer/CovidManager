@@ -152,7 +152,7 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         startActivity(intent);
     }
 
-    private void getGoodVaccine() {
+    public void getGoodVaccine() {
         for (Vaccine vaccine : vaccines) {
             if (vaccine.getName().equals(vaccin)) {
 
@@ -277,7 +277,7 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
 
     }
 
-    private Boolean checkDates() {
+    public Boolean checkDates() {
         Date startTime = null;
         Date endTime = null;
         try {
