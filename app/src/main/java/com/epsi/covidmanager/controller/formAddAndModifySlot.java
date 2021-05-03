@@ -210,8 +210,8 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         try {
             //startTime = new Date(new Date(String.valueOf(heureDebut.getText())).getTime() + 2 * HOUR);
             //endTime = new Date(new Date(String.valueOf(heureFin.getText())).getTime() + 2 * HOUR);
-            startTime = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse(String.valueOf(startTime));
-            endTime = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse(String.valueOf(endTime));
+            startTime = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse(String.valueOf(heureDebut.getText()));
+            endTime = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse(String.valueOf(heureFin.getText()));
         } catch (ParseException e) {
             e.printStackTrace();
         }
