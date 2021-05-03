@@ -3,6 +3,7 @@ package com.epsi.covidmanager.controller;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -48,6 +49,8 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
 
 
     private Slot slot;
+
+    public static final long HOUR = 3600*1000; // in milli-seconds.
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -205,8 +208,10 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
         Date endTime = null;
 
         try {
-            startTime = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse(String.valueOf(heureDebut.getText()));
-            endTime = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse(String.valueOf(heureFin.getText()));
+            //startTime = new Date(new Date(String.valueOf(heureDebut.getText())).getTime() + 2 * HOUR);
+            //endTime = new Date(new Date(String.valueOf(heureFin.getText())).getTime() + 2 * HOUR);
+            startTime = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse(String.valueOf(startTime));
+            endTime = new SimpleDateFormat("dd/MM/yyyy hh:mm").parse(String.valueOf(endTime));
         } catch (ParseException e) {
             e.printStackTrace();
         }
