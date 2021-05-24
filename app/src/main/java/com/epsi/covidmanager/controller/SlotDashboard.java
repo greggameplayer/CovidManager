@@ -154,19 +154,19 @@ public class SlotDashboard extends AppCompatActivity implements SlotAdaptater.On
 
     public void loadSlots(){
         boolean mustBeAdded;
-
-        for(Vial vial : vials){
-            mustBeAdded = true;
-            if(vial.getSlot() != null){
-                for(Slot slot : slots)
-                {
-                    if(slot.getId().equals(vial.getSlot().getId())){
-                        mustBeAdded = false;
-                        break;
+        if (vials != null) {
+            for (Vial vial : vials) {
+                mustBeAdded = true;
+                if (vial.getSlot() != null) {
+                    for (Slot slot : slots) {
+                        if (slot.getId().equals(vial.getSlot().getId())) {
+                            mustBeAdded = false;
+                            break;
+                        }
                     }
-                }
-                if (mustBeAdded){
-                    slots.add(vial.getSlot());
+                    if (mustBeAdded) {
+                        slots.add(vial.getSlot());
+                    }
                 }
             }
         }
@@ -215,26 +215,30 @@ public class SlotDashboard extends AppCompatActivity implements SlotAdaptater.On
 
     public void checkVaccinesQuantity(){
         StringBuilder value = new StringBuilder();
-        for(Vaccine vaccine : vaccines){
-            int nb = quantityRemainToAllow(vaccine);
-            if(nb < 200){
-                value.append(vaccine.getName().toUpperCase()).append(" \n");
+        if(vaccines != null) {
+            for (Vaccine vaccine : vaccines) {
+                int nb = quantityRemainToAllow(vaccine);
+                if (nb < 200) {
+                    value.append(vaccine.getName().toUpperCase()).append(" \n");
+                }
             }
-        }
-        if(!value.toString().equals("")){
-            ly_alert_vaccins_quantity.setVisibility(View.VISIBLE);
-            id_alert_vaccin_names.setText(value.toString());
+            if (!value.toString().equals("")) {
+                ly_alert_vaccins_quantity.setVisibility(View.VISIBLE);
+                id_alert_vaccin_names.setText(value.toString());
+            }
         }
 
     }
 
-    public int quantityRemainToAllow(Vaccine vaccine){
+    public int quantityRemainToAllow(Vaccine vaccine) {
         int nb = 0;
-        for(Vial vial : vials){
-            if(vial.getVaccine().getName().equals(vaccine.getName()) && vial.getSlot() == null){
-                nb = nb+vial.getShotNumber();
+        if (vials != null) {
+            for (Vial vial : vials) {
+                if (vial.getVaccine().getName().equals(vaccine.getName()) && vial.getSlot() == null) {
+                    nb = nb + vial.getShotNumber();
+                }
             }
         }
-        return nb;
-    }
+            return nb;
+        }
 }
