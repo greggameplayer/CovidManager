@@ -89,21 +89,24 @@ public class VaccineAdaptater extends RecyclerView.Adapter<VaccineAdaptater.View
     public int quantityAllTime(Vaccine vaccine){
         int nb = 0;
         int i = 0;
-        for(Vial vial : vials){
-            if(vial.getVaccine().getId().equals(vaccine.getId())){
-                nb += vial.getShotNumber();
-                i++;
+        if (vials!= null) {
+            for (Vial vial : vials) {
+                if (vial.getVaccine().getId().equals(vaccine.getId())) {
+                    nb += vial.getShotNumber();
+                    i++;
+                }
             }
         }
-        Log.d("I", Integer.toString(i));
         return nb;
     }
 
     public int quantityRemainToAllow(Vaccine vaccine){
         int nb = 0;
-        for(Vial vial : vials){
-            if(vial.getVaccine().getId().equals(vaccine.getId()) && vial.getSlot() == null){
-                nb += vial.getShotNumber();
+        if (vials != null) {
+            for (Vial vial : vials) {
+                if (vial.getVaccine().getId().equals(vaccine.getId()) && vial.getSlot() == null) {
+                    nb += vial.getShotNumber();
+                }
             }
         }
         return nb;

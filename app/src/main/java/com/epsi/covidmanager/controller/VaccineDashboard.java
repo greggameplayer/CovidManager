@@ -162,10 +162,12 @@ public class VaccineDashboard extends AppCompatActivity implements VaccineAdapta
 
     public void checkVaccinesQuantity(){
         StringBuilder value = new StringBuilder();
-        for(Vaccine vaccine : vaccines){
-            int nb = quantityRemainToAllow(vaccine);
-            if(nb < 200){
-                value.append(vaccine.getName().toUpperCase()).append(" \n");
+        if (vaccines != null) {
+            for (Vaccine vaccine : vaccines) {
+                int nb = quantityRemainToAllow(vaccine);
+                if (nb < 200) {
+                    value.append(vaccine.getName().toUpperCase()).append(" \n");
+                }
             }
         }
         if(!value.toString().equals("")){
@@ -177,9 +179,11 @@ public class VaccineDashboard extends AppCompatActivity implements VaccineAdapta
 
     public int quantityRemainToAllow(Vaccine vaccine){
         int nb = 0;
-        for(Vial vial : vials){
-            if(vial.getVaccine().getName().equals(vaccine.getName()) && vial.getSlot() == null){
-                nb = nb+vial.getShotNumber();
+        if(vials != null) {
+            for (Vial vial : vials) {
+                if (vial.getVaccine().getName().equals(vaccine.getName()) && vial.getSlot() == null) {
+                    nb = nb + vial.getShotNumber();
+                }
             }
         }
         return nb;

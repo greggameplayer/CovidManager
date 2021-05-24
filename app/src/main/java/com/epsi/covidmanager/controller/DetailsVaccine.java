@@ -75,9 +75,11 @@ public class DetailsVaccine extends AppCompatActivity implements View.OnClickLis
 
     public int quantityAllTime(Vaccine vaccine){
         int nb = 0;
-        for(Vial vial : vials){
-            if(vial.getVaccine().getName().equals(vaccine.getName())){
-                nb += vial.getShotNumber();
+        if (vials != null) {
+            for (Vial vial : vials) {
+                if (vial.getVaccine().getName().equals(vaccine.getName())) {
+                    nb += vial.getShotNumber();
+                }
             }
         }
         return nb;
@@ -85,9 +87,11 @@ public class DetailsVaccine extends AppCompatActivity implements View.OnClickLis
 
     public int quantityRemainToAllow(Vaccine vaccine){
         int nb = 0;
-        for(Vial vial : vials){
-            if(vial.getVaccine().getName().equals(vaccine.getName()) && vial.getSlot() == null){
-                nb += vial.getShotNumber();
+        if (vials != null) {
+            for (Vial vial : vials) {
+                if (vial.getVaccine().getName().equals(vaccine.getName()) && vial.getSlot() == null) {
+                    nb += vial.getShotNumber();
+                }
             }
         }
         return nb;
@@ -99,21 +103,22 @@ public class DetailsVaccine extends AppCompatActivity implements View.OnClickLis
         long date1, date2;
 
         date2 = currentTime.getTime();
-        for(Vial vial : vials){
+        if (vials != null) {
+            for (Vial vial : vials) {
 
-            if(vial.getSlot() != null){
-                date = vial.getSlot().getStartTime();
-                date1 = date.getTime();
+                if (vial.getSlot() != null) {
+                    date = vial.getSlot().getStartTime();
+                    date1 = date.getTime();
 
-                long longDate=date.getTime();
+                    long longDate = date.getTime();
 
-                if( vial.getVaccine().getName().equals(vaccine.getName()) && date1 > date2 ){
-                    nb += vial.getShotNumber();
-                }
-            }
-            else {
-                if( vial.getVaccine().getName().equals(vaccine.getName()) ){
-                    nb += vial.getShotNumber();
+                    if (vial.getVaccine().getName().equals(vaccine.getName()) && date1 > date2) {
+                        nb += vial.getShotNumber();
+                    }
+                } else {
+                    if (vial.getVaccine().getName().equals(vaccine.getName())) {
+                        nb += vial.getShotNumber();
+                    }
                 }
             }
         }
