@@ -66,12 +66,13 @@ public class formAddAndModifySlot extends AppCompatActivity implements AdapterVi
 
 
         ArrayList<String> tabNameVaccines = new ArrayList<>();
-
-        for (Vaccine vaccine : vaccines) {
-            for (Vial vial : vials) {
-                if (vial.getVaccine().getName().equals(vaccine.getName())) {
-                    tabNameVaccines.add(vaccine.getName());
-                    break;
+        if (vials != null) {
+            for (Vaccine vaccine : vaccines) {
+                for (Vial vial : vials) {
+                    if (vial.getVaccine().getName().equals(vaccine.getName())) {
+                        tabNameVaccines.add(vaccine.getName());
+                        break;
+                    }
                 }
             }
         }
